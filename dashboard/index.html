@@ -1,0 +1,1115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>청년층 제주 관광 현황</title>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #6f6e69;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,.10); --wash: rgba(11,11,11,.04);
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --mute-mark: #c3c2b7; --land: #eeede8;
+  --q1: #cde2fb; --q2: #9ec5f4; --q3: #5598e7; --q4: #256abf; --q5: #0d366b; --cloud: #184f95;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #a3a29a;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,.10); --wash: rgba(255,255,255,.06);
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --mute-mark: #4a4a46; --land: #2c2c2a;
+    --q1: #104281; --q2: #1c5cab; --q3: #3987e5; --q4: #86b6ef; --q5: #cde2fb; --cloud: #9ec5f4;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.55 system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 24px 24px 56px; }
+h1 { font-size: 26px; line-height: 1.25; margin: 0; font-weight: 700; }
+.question { font-size: 16px; color: var(--ink2); margin: 4px 0 12px; }
+.meta { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; color: var(--ink2); margin: 0; font-size: 13px; }
+.meta dt { font-weight: 600; color: var(--ink); }
+.meta dd { margin: 0; }
+
+.filters { background: var(--page); padding: 12px 0 10px; margin: 12px 0 8px; border-bottom: 1px solid var(--grid); }
+@media (min-width: 1280px) { .filters { position: sticky; top: 0; z-index: 20; } }
+#f-pcat, #f-region { max-width: 130px; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: flex-end; }
+.field { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--ink2); min-width: 0; }
+.field select { font: inherit; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--axis); border-radius: 6px; padding: 5px 8px; max-width: 190px; min-height: 32px; }
+.btn { font: inherit; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--axis); border-radius: 6px; padding: 5px 10px; min-height: 32px; cursor: pointer; }
+.btn:hover { background: var(--wash); }
+.btn[aria-pressed="true"] { border-color: var(--ink); font-weight: 600; }
+.btn:disabled { opacity: .45; cursor: default; }
+.presets { display: flex; gap: 4px; flex-wrap: wrap; }
+.status { margin: 8px 0 0; font-size: 13px; color: var(--ink2); }
+.status b { color: var(--ink); font-weight: 600; }
+.warn { display: block; margin-top: 2px; }
+:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+
+h2 { font-size: 18px; margin: 28px 0 10px; font-weight: 700; }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+.c3 { grid-column: span 3; } .c4 { grid-column: span 4; } .c5 { grid-column: span 5; } .c6 { grid-column: span 6; } .c7 { grid-column: span 7; } .c8 { grid-column: span 8; } .c12 { grid-column: span 12; }
+.card h3 { font-size: 15px; margin: 0; font-weight: 600; }
+.scope { font-size: 12px; color: var(--muted); margin: 2px 0 10px; }
+.note { font-size: 12px; color: var(--muted); margin: 8px 0 0; }
+.lede { font-size: 13px; color: var(--ink2); margin: 0 0 8px; }
+.lede b { color: var(--ink); font-weight: 600; font-size: 15px; }
+
+.kpi-label { font-size: 13px; color: var(--ink2); margin: 0; }
+.kpi-value { font-size: 26px; font-weight: 600; line-height: 1.25; margin: 2px 0; overflow-wrap: anywhere; }
+.hero .kpi-value { font-size: 44px; }
+.kpi-sub { font-size: 12px; color: var(--muted); margin: 0; }
+.kpi-na { font-size: 15px; font-weight: 600; color: var(--ink2); }
+
+.chart { width: 100%; position: relative; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.axis-text { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+.axis-title { font-size: 11px; fill: var(--ink2); }
+.bar-label { font-size: 12px; fill: var(--ink2); }
+.bar-value { font-size: 11px; fill: var(--ink2); font-variant-numeric: tabular-nums; }
+.hit { fill: transparent; }
+.hit:hover + .mark, .bar-g:hover .mark, .bar-g:focus-visible .mark { opacity: .78; }
+.bar-g { outline: none; }
+.clickable { cursor: pointer; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink2); margin: 0 0 6px; padding: 0; list-style: none; }
+.legend li { display: inline-flex; align-items: center; gap: 6px; }
+.key-line { width: 16px; height: 2px; border-radius: 2px; display: inline-block; }
+.key-box { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+.empty { display: flex; gap: 8px; align-items: flex-start; padding: 16px; margin: 4px 0; background: var(--wash); border-radius: 8px; color: var(--ink2); font-size: 13px; }
+.empty .icon { font-weight: 700; color: var(--ink); }
+
+details.tbl { margin-top: 10px; }
+details.tbl summary { cursor: pointer; font-size: 13px; color: var(--ink2); padding: 4px 0; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th { text-align: left; font-weight: 600; font-size: 12px; color: var(--ink2); border-bottom: 1px solid var(--axis); padding: 6px 8px; white-space: nowrap; }
+td { border-bottom: 1px solid var(--grid); padding: 6px 8px; vertical-align: top; white-space: nowrap; }
+#table-sources td { white-space: normal; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.clip { max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cell-sub { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#table-sources table { min-width: 960px; }
+tr.sel td { background: var(--wash); font-weight: 600; }
+th.active, td.active { font-weight: 600; color: var(--ink); }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin: 0 0 8px; }
+.tools input { font: inherit; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--axis); border-radius: 6px; padding: 5px 8px; min-height: 32px; width: 220px; max-width: 100%; }
+.pager { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink2); justify-content: flex-end; margin-top: 8px; font-variant-numeric: tabular-nums; }
+
+.map-box { position: relative; }
+.map-box path.region { stroke: var(--surface); stroke-width: 1; cursor: pointer; }
+.map-box path.region:hover, .map-box path.region:focus-visible { stroke: var(--ink); stroke-width: 1.5; outline: none; }
+.map-box path.region.selected { stroke: var(--ink); stroke-width: 2; }
+.map-label { font-size: 11px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; pointer-events: none; }
+.scale { display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 11px; color: var(--ink2); margin: 6px 0 0; padding: 0; list-style: none; font-variant-numeric: tabular-nums; }
+.scale li { display: inline-flex; align-items: center; gap: 4px; }
+
+.cloud text { cursor: default; fill: var(--cloud); font-weight: 600; }
+.cloud text:hover { opacity: .7; }
+
+.review-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.review-grid h4 { margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+.rv-item { border-top: 1px solid var(--grid); padding: 6px 0; }
+.rv-item summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; }
+.rv-name { font-weight: 600; font-size: 13px; }
+.rv-count { font-size: 12px; color: var(--ink2); font-variant-numeric: tabular-nums; }
+.rv-links { margin: 6px 0 2px; padding-left: 16px; font-size: 12px; }
+.rv-links li { margin-bottom: 6px; }
+.rv-links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--axis); overflow-wrap: anywhere; }
+.rv-quote { display: block; color: var(--muted); overflow-wrap: anywhere; }
+.analysis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.analysis ul, .analysis ol { margin: 6px 0 0; padding-left: 18px; }
+.analysis li { margin-bottom: 6px; }
+.tag { font-size: 11px; color: var(--muted); }
+
+#tooltip { position: fixed; z-index: 50; pointer-events: none; display: none; background: var(--surface); border: 1px solid var(--axis); border-radius: 8px; padding: 8px 10px; font-size: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.14); max-width: 300px; }
+#tooltip .t { color: var(--ink2); margin-bottom: 4px; overflow-wrap: anywhere; }
+#tooltip .r { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+#tooltip .r b { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+#tooltip .r span.l { color: var(--ink2); }
+
+@media (max-width: 980px) {
+  .c3, .c4, .c5, .c6, .c7, .c8 { grid-column: span 12; }
+  .review-grid, .analysis { grid-template-columns: 1fr; }
+  .wrap { padding: 16px 16px 40px; }
+  #f-pcat, #f-region { max-width: 100%; }
+  td.clip { max-width: 150px; }
+  .hero .kpi-value { font-size: 36px; }
+  .field select { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>청년층 제주 관광 현황</h1>
+    <p class="question">청년층은 제주에서 어떤 여행을 하고 있을까?</p>
+    <dl class="meta">
+      <dt>분석 기간</dt><dd id="meta-period"></dd>
+      <dt>자료별 기간</dt><dd>20대 방문·입도 관광객·읍면동 방문·검색: 2024-01 ~ 2026-08 / 인기 장소: 2024-01 ~ 2026-09 / 온라인 후기: 2024-01 ~ 2026-10</dd>
+      <dt>데이터 출처</dt><dd>제주 관광 빅데이터 플랫폼(비짓제주), 네이버 블로그 검색 API (온라인 후기)</dd>
+      <dt>분석 대상</dt><dd>20대는 연령대별 방문 자료에만 있음. 지역·장소·검색어 자료는 연령 정보가 없어 전체 관광객 특성으로 봄.</dd>
+    </dl>
+  </header>
+
+  <section class="filters" aria-label="필터">
+    <div class="filter-row">
+      <label class="field">기간 시작<select id="f-from"></select></label>
+      <label class="field">기간 끝<select id="f-to"></select></label>
+      <div class="field">빠른 선택<div class="presets" id="f-presets"></div></div>
+      <label class="field">지역<select id="f-region"></select></label>
+      <label class="field">성별 (20대)<select id="f-sex"><option value="all">전체</option><option value="M">남성 (M)</option><option value="W">여성 (W)</option></select></label>
+      <label class="field">방문객 구분<select id="f-visitor"><option value="tot">전체</option><option value="dom">내국인</option><option value="for">외국인</option></select></label>
+      <label class="field">도착 구분<select id="f-arrive"><option value="arr">전체 도착건수</option><option value="tour">관광객 도착</option><option value="res">도민 도착</option></select></label>
+      <label class="field">검색 분류<select id="f-scat"></select></label>
+      <label class="field">장소 카테고리<select id="f-pcat"></select></label>
+      <button class="btn" id="f-reset" type="button">초기화</button>
+    </div>
+    <p class="status" id="status" role="status"></p>
+  </section>
+
+  <h2>20대 방문 규모</h2>
+  <div class="grid">
+    <div class="card c6 hero" id="kpi-visitors"></div>
+    <div class="card c6" id="kpi-search"></div>
+    <div class="card c4" id="kpi-mom"></div>
+    <div class="card c4" id="kpi-period"></div>
+    <div class="card c4" id="kpi-share"></div>
+  </div>
+
+  <h2>방문 추이와 인기 장소</h2>
+  <div class="grid">
+    <div class="card c6">
+      <h3 id="trend-title">20대 월별 방문객 수</h3>
+      <p class="scope" id="trend-scope"></p>
+      <ul class="legend" id="trend-legend"></ul>
+      <div class="chart" id="chart-trend"></div>
+      <details class="tbl"><summary>표로 보기</summary><div class="scroll" id="table-trend"></div></details>
+    </div>
+    <div class="card c6">
+      <h3 id="place-title">인기 장소 순위</h3>
+      <p class="scope" id="place-scope"></p>
+      <div class="tools"><input id="place-q" type="search" placeholder="목적지명 검색" aria-label="목적지명 검색"><span class="tag" id="place-total"></span></div>
+      <div class="scroll" id="table-places"></div>
+      <div class="pager" id="place-pager"></div>
+      <p class="note">목적지명 + 읍면동명이 같으면 한 장소로 묶음. 카테고리·주소는 도착건수가 가장 많은 값이고, 주소가 여러 개면 개수를 표시.</p>
+    </div>
+    <div class="card c6">
+      <h3>연령대별 방문객 수</h3>
+      <p class="scope" id="age-scope"></p>
+      <div class="chart" id="chart-age"></div>
+      <details class="tbl"><summary>표로 보기</summary><div class="scroll" id="table-age"></div></details>
+      <p class="note">원본 값 10~70을 "대"로 표시. 10이 10대 이하인지, 70이 70대 이상인지는 추가 확인 필요.</p>
+    </div>
+    <div class="card c6">
+      <h3 id="inbound-title">입도 관광객 월별 추이 (전체 관광객)</h3>
+      <p class="scope" id="inbound-scope"></p>
+      <ul class="legend" id="inbound-legend"></ul>
+      <div class="chart" id="chart-inbound"></div>
+      <details class="tbl"><summary>표로 보기</summary><div class="scroll" id="table-inbound"></div></details>
+      <p class="note">20대 방문객 수와 집계 기준이 달라 직접 비교하거나 나눌 수 없음.</p>
+    </div>
+  </div>
+
+  <h2>지역별 방문</h2>
+  <div class="grid">
+    <div class="card c7">
+      <h3 id="map-title">읍면동별 방문객 수 지도</h3>
+      <p class="scope" id="map-scope"></p>
+      <div class="map-box"><div class="chart" id="map"></div></div>
+      <ul class="scale" id="map-scale"></ul>
+      <p class="note">색은 표시 범위 안 읍면동을 5단계로 나눈 값(같은 개수씩). 읍면동을 누르면 지역 필터가 바뀜. 경계: 통계청 SGIS(공공누리 1유형)를 가공한 vuski/admdongkor ver20261001 (CC BY 4.0), 표시용으로 단순화함.</p>
+    </div>
+    <div class="card c5">
+      <h3 id="region-title">읍면동별 방문객 수</h3>
+      <p class="scope" id="region-scope"></p>
+      <p class="lede" id="region-lede"></p>
+      <ul class="legend" id="region-legend"></ul>
+      <div class="chart" id="chart-region"></div>
+      <details class="tbl"><summary>표로 보기 (범위 안 전체 읍면동)</summary><div class="scroll" id="table-region"></div></details>
+    </div>
+  </div>
+
+  <h2>관광 검색어</h2>
+  <div class="grid">
+    <div class="card c7">
+      <h3 id="cloud-title">검색어 워드클라우드</h3>
+      <p class="scope" id="cloud-scope"></p>
+      <div class="chart cloud" id="wordcloud"></div>
+      <p class="note" id="cloud-note"></p>
+    </div>
+    <div class="card c5">
+      <h3>키워드 빈도 표</h3>
+      <p class="scope">키워드 = 원본 "지역명"(실제로는 장소 이름). 수치 합 = 원본 "수치"의 합</p>
+      <div class="tools"><input id="word-q" type="search" placeholder="키워드 검색" aria-label="키워드 검색"><span class="tag" id="word-total"></span></div>
+      <div class="scroll" id="table-keywords"></div>
+      <div class="pager" id="word-pager"></div>
+    </div>
+    <div class="card c12" style="padding:10px 16px">
+      <p class="note" style="margin:0" id="search-note">검색량은 관심의 지표일 뿐 실제 방문이나 선호로 단정할 수 없음. "수치"의 정의와 단위는 파일에 없어 추가 확인이 필요함. 연령 정보가 없어 전체 이용자 기준으로 봄.</p>
+    </div>
+  </div>
+
+  <h2>온라인 후기</h2>
+  <div class="card" id="reviews">
+    <p class="scope" id="review-scope"></p>
+    <p class="lede" id="review-lede"></p>
+    <div class="review-grid">
+      <div><h4>주요 활동</h4><div id="review-a"></div></div>
+      <div><h4>만족 요인</h4><div id="review-s"></div></div>
+      <div><h4>불편 사항</h4><div id="review-i"></div></div>
+    </div>
+    <p class="note" id="review-note"></p>
+    <p class="note" id="review-source" style="font-weight:600"></p>
+  </div>
+
+  <h2>분석 결과</h2>
+  <div class="analysis">
+    <div class="card"><h3>확인된 사실 <span class="tag">현재 필터 기준으로 갱신</span></h3><ul id="an-facts"></ul></div>
+    <div class="card"><h3>해석 <span class="tag" id="an-base"></span></h3><ul id="an-interp"></ul></div>
+    <div class="card"><h3>추가 확인 사항</h3><ul id="an-check"></ul></div>
+    <div class="card"><h3>실행 제안 <span class="tag">검증 전 가설</span></h3><ol id="an-action"></ol></div>
+  </div>
+
+  <h2>자료 기준</h2>
+  <div class="card">
+    <div class="scroll" id="table-sources"></div>
+    <p class="note"><b>관광 데이터 출처:</b> 위 표의 엑셀 7개 모두 제주 관광 빅데이터 플랫폼(비짓제주)입니다.</p>
+    <p class="note"><b>지도:</b> 값은 읍면동 방문 파일의 내국인·외국인·총 방문객 수 합계입니다. 10자리 읍면동코드로 경계와 연결했고, 인기 장소 파일의 8자리 코드와 이름도 43개 모두 맞는지 만들 때 확인합니다. 장소·검색어는 좌표가 없어 지도에 찍지 않습니다.</p>
+    <p class="note"><b>워드클라우드:</b> 지역명별 수치 합 상위 60개이고, 수치 합이 클수록 글자가 큽니다(제곱근 눈금). 글자 위치와 색은 의미가 없습니다. 형태소 분석이나 표기 통합은 하지 않았습니다.</p>
+    <p class="note"><b>검색어 지역 필터:</b> 비짓제주에는 읍면동 열이 없어 주소 글자에서 찾습니다. 동 지역은 도로명 주소에 동 이름이 잘 나오지 않아 실제보다 적게 잡힙니다.</p>
+    <p class="note"><b>온라인 후기:</b> 검색어 20개를 정확도순과 최신순으로 조회해 같은 링크를 하나로 합쳤습니다. 최신순 결과가 많아 최근 글에 치우치므로 월별 건수 변화는 추이가 아닙니다. 제목과 요약에 제주 여행 맥락이 없어 보이는 글 <span id="rv-excluded"></span>건은 집계에서 뺐습니다. 이 페이지에는 근거로 보여 주는 글만 제목·발췌·링크를 담고, 나머지는 월별 건수만 담았습니다.</p>
+    <p class="note"><b>PDF와 달라진 점:</b> ① 증감률은 같은 달끼리 짝지어 계산합니다(PDF 43.5%는 비교 구간이 맞지 않음). ② 장소 순위는 도착건수 합입니다(PDF는 연월 숫자의 합). ③ 월별 선그래프는 연도별 선으로 그립니다(PDF는 월마다 선이 따로 있어 0으로 떨어짐). ④ 지도는 히트맵 대신 읍면동 경계를 색칠합니다. ⑤ 기간 필터 끝은 자료가 있는 2026-09까지입니다.</p>
+  </div>
+</div>
+<div id="tooltip" role="presentation"></div>
+
+<script src="data.js"></script>
+<script src="reviews.js"></script>
+<script>
+"use strict";
+const D = window.DATA;
+const fmt = n => Math.round(n).toLocaleString("ko-KR");
+const pct = (n, d = 1) => n.toFixed(d) + "%";
+const signed = (n, d = 1) => (n > 0 ? "▲ +" : n < 0 ? "▼ " : "") + n.toFixed(d) + "%";
+const compact = v => {
+  if (v >= 1e8) return +(v / 1e8).toFixed(2) + "억";
+  if (v >= 1e4) return +(v / 1e4).toFixed(1) + "만";
+  return fmt(v);
+};
+const $ = id => document.getElementById(id);
+function dec(b, T) {
+  const s = atob(b), u = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
+  return new T(u.buffer);
+}
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const k in attrs || {}) {
+    if (k === "class") e.className = attrs[k];
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), attrs[k]);
+    else e.setAttribute(k, attrs[k]);
+  }
+  for (const c of kids) e.append(c);
+  return e;
+}
+const NS = "http://www.w3.org/2000/svg";
+function sv(tag, attrs, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs || {}) {
+    if (k.startsWith("on")) e.addEventListener(k.slice(2), attrs[k]);
+    else e.setAttribute(k, attrs[k]);
+  }
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+/* ---------- 데이터 준비 ---------- */
+const mLabel = i => { const y = 2024 + Math.floor(i / 12), m = i % 12 + 1; return y + "-" + String(m).padStart(2, "0"); };
+const S = { ...D.search };
+for (const [k, T] of [["keyCat", Uint8Array], ["keyName", Uint32Array], ["keyAddr", Uint32Array], ["keySgg", Uint8Array], ["keyEmd", Uint8Array], ["off", Uint32Array], ["mon", Uint8Array], ["sum", Uint16Array], ["cnt", Uint8Array]]) S[k] = dec(D.search[k], T);
+const P = { ...D.pop };
+for (const [k, T] of [["keyName", Uint32Array], ["keyAddr", Uint32Array], ["keyEmd", Uint8Array], ["keyCat", Uint16Array], ["off", Uint32Array], ["mon", Uint8Array], ["arr", Uint16Array], ["tour", Uint16Array], ["res", Uint16Array]]) P[k] = dec(D.pop[k], T);
+const E = D.emd;
+const nKeysP = P.keyName.length, nKeysS = S.keyName.length;
+const emdIndex = Object.fromEntries(E.names.map((n, i) => [n, i]));
+
+// 목적지명 + 읍면동명 묶음
+const groupOf = new Uint32Array(nKeysP), groupMap = new Map(), groupName = [], groupEmd = [], groupKeys = [];
+for (let k = 0; k < nKeysP; k++) {
+  const id = P.keyName[k] * 64 + P.keyEmd[k];
+  let g = groupMap.get(id);
+  if (g === undefined) { g = groupName.length; groupMap.set(id, g); groupName.push(P.keyName[k]); groupEmd.push(P.keyEmd[k]); groupKeys.push([]); }
+  groupOf[k] = g;
+  groupKeys[g].push(k);
+}
+const nG = groupName.length;
+
+const RV = window.REVIEWS;
+const allMonths = (() => { let mx = 0; for (let i = 0; i < P.mon.length; i++) if (P.mon[i] > mx) mx = P.mon[i]; for (const m in RV.months) if (+m > mx) mx = +m; return mx; })();
+const monthsWith = {
+  age: new Set(D.age.map(r => r[0])), inbound: new Set(D.inbound.map(r => r[0])), emd: new Set(E.rows.map(r => r[0])),
+  search: new Set(S.mon), pop: new Set(P.mon),
+};
+const COMMON_END = Math.max(...monthsWith.age);
+const DEFAULTS = { from: 0, to: COMMON_END, region: "all", sex: "all", visitor: "tot", arrive: "arr", scat: -1, pcat: -1 };
+const state = { ...DEFAULTS, placeQ: "", wordQ: "", placePage: 0, wordPage: 0 };
+const PAGE = 10;
+const VISITOR_LABEL = { tot: "전체", dom: "내국인", for: "외국인" };
+const ARRIVE_LABEL = { arr: "전체 도착건수", tour: "관광객 도착", res: "도민 도착" };
+const SEX_LABEL = { all: "", M: "남성 ", W: "여성 " };
+
+function regionTest(region) {
+  if (region === "all") return () => true;
+  const [t, v] = region.split(":");
+  if (t === "sgg") return e => E.sgg[e] === v;
+  const idx = emdIndex[v];
+  return e => e === idx;
+}
+function regionLabel(region) { return region === "all" ? "제주 전체" : region.split(":")[1]; }
+function scopeSgg(region) {
+  if (region === "all") return null;
+  const [t, v] = region.split(":");
+  return t === "sgg" ? v : E.sgg[emdIndex[v]];
+}
+
+/* ---------- 집계 (화면과 분리된 순수 계산) ---------- */
+function computeAge(st) {
+  const by = new Map(), ages = {};
+  let total = 0, allAges = 0;
+  const monthAll = new Map();
+  for (const [m, sex, age, v] of D.age) {
+    if (st.sex !== "all" && sex !== st.sex) continue;
+    if (age === 20) by.set(m, (by.get(m) || 0) + v);
+    monthAll.set(m, (monthAll.get(m) || 0) + v);
+    if (m >= st.from && m <= st.to) {
+      ages[age] = (ages[age] || 0) + v;
+      allAges += v;
+      if (age === 20) total += v;
+    }
+  }
+  const inRange = [...by.keys()].filter(m => m >= st.from && m <= st.to).sort((a, b) => a - b);
+  const last = inRange.length ? inRange[inRange.length - 1] : null;
+  const mom = last === null ? { state: "nodata" }
+    : by.has(last - 12) ? { state: "ok", month: last, prevMonth: last - 12, cur: by.get(last), prev: by.get(last - 12), rate: (by.get(last) / by.get(last - 12) - 1) * 100 }
+    : { state: "noprev", month: last, prevMonth: last - 12 };
+  const paired = inRange.filter(m => by.has(m - 12));
+  const cur = paired.reduce((a, m) => a + by.get(m), 0), prev = paired.reduce((a, m) => a + by.get(m - 12), 0);
+  const period = inRange.length === 0 ? { state: "nodata" }
+    : paired.length === 0 ? { state: "noprev" }
+    : { state: "ok", months: paired.length, total: inRange.length, first: paired[0], last: paired[paired.length - 1], cur, prev, rate: (cur / prev - 1) * 100 };
+  const peak = inRange.length ? inRange.reduce((a, m) => by.get(m) > by.get(a) ? m : a) : null;
+  const low = inRange.length ? inRange.reduce((a, m) => by.get(m) < by.get(a) ? m : a) : null;
+  const sexRows = {};
+  for (const [m, sex, age, v] of D.age) if (age === 20 && m >= st.from && m <= st.to) { (sexRows[m] = sexRows[m] || {})[sex] = v; }
+  return { total, allAges, share: allAges ? total / allAges * 100 : null, ages, months: inRange, series: by, mom, period, peak, low, sexRows };
+}
+function computeInbound(st) {
+  const col = { dom: 1, for: 2, tot: 3 }[st.visitor];
+  const rows = D.inbound.filter(r => r[0] >= st.from && r[0] <= st.to).sort((a, b) => a[0] - b[0]);
+  return { rows, col, total: rows.reduce((a, r) => a + r[col], 0) };
+}
+function computeRegion(st) {
+  const col = { dom: 2, for: 3, tot: 4 }[st.visitor];
+  const dom = new Float64Array(E.names.length), fo = new Float64Array(E.names.length), tot = new Float64Array(E.names.length);
+  let hasData = false;
+  for (const r of E.rows) if (r[0] >= st.from && r[0] <= st.to) { dom[r[1]] += r[2]; fo[r[1]] += r[3]; tot[r[1]] += r[4]; hasData = true; }
+  const val = col === 2 ? dom : col === 3 ? fo : tot;
+  const sgg = scopeSgg(st.region);
+  const inScope = E.names.map((_, i) => !sgg || E.sgg[i] === sgg);
+  const test = regionTest(st.region);
+  let all = 0, selected = 0;
+  val.forEach((v, i) => { all += v; if (test(i)) selected += v; });
+  const items = E.names.map((n, i) => ({ i, name: n, sgg: E.sgg[i], dom: dom[i], for: fo[i], tot: tot[i], value: val[i] })).filter(o => inScope[o.i]).sort((a, b) => b.value - a.value);
+  return { hasData, val, items, all, selected, inScope };
+}
+function computePlaces(st) {
+  const test = regionTest(st.region);
+  const arr = new Float64Array(nG), tour = new Float64Array(nG), res = new Float64Array(nG), seen = new Uint8Array(nG);
+  let tArr = 0, tTour = 0, tRes = 0;
+  for (let k = 0; k < nKeysP; k++) {
+    if (st.pcat >= 0 && P.keyCat[k] !== st.pcat) continue;
+    if (!test(P.keyEmd[k])) continue;
+    const g = groupOf[k];
+    for (let j = P.off[k], e = P.off[k + 1]; j < e; j++) {
+      const m = P.mon[j];
+      if (m < st.from || m > st.to) continue;
+      arr[g] += P.arr[j]; tour[g] += P.tour[j]; res[g] += P.res[j]; seen[g] = 1;
+      tArr += P.arr[j]; tTour += P.tour[j]; tRes += P.res[j];
+    }
+  }
+  const measure = st.arrive === "tour" ? tour : st.arrive === "res" ? res : arr;
+  const ids = [];
+  for (let g = 0; g < nG; g++) if (seen[g]) ids.push(g);
+  ids.sort((a, b) => measure[b] - measure[a] || arr[b] - arr[a] || (P.names[groupName[a]] < P.names[groupName[b]] ? -1 : 1));
+  return { ids, arr, tour, res, measure, tArr, tTour, tRes };
+}
+function placeDetail(st, g) {
+  const cats = new Map(), addrs = new Map();
+  for (const k of groupKeys[g]) {
+    if (st.pcat >= 0 && P.keyCat[k] !== st.pcat) continue;
+    let s = 0;
+    for (let j = P.off[k], e = P.off[k + 1]; j < e; j++) if (P.mon[j] >= st.from && P.mon[j] <= st.to) s += P.arr[j];
+    if (!s) continue;
+    cats.set(P.keyCat[k], (cats.get(P.keyCat[k]) || 0) + s);
+    addrs.set(P.keyAddr[k], (addrs.get(P.keyAddr[k]) || 0) + s);
+  }
+  const top = m => [...m.entries()].sort((a, b) => b[1] - a[1])[0];
+  return { cat: cats.size ? P.cats[top(cats)[0]] : "-", addr: addrs.size ? P.addrs[top(addrs)[0]] : "-", addrCount: addrs.size };
+}
+function computeSearch(st) {
+  const [t, v] = st.region === "all" ? [null, null] : st.region.split(":");
+  const sggIdx = t === "sgg" ? (v === "제주시" ? 0 : 1) : -1;
+  const eIdx = t === "emd" ? emdIndex[v] : -1;
+  const nC = S.cats.length, nN = S.names.length;
+  const sum = new Float64Array(nN), rows = new Float64Array(nN), byCat = new Float64Array(nN * nC);
+  let total = 0, matchedRows = 0, scopeRows = 0;
+  const catTotals = new Float64Array(nC);
+  for (let k = 0; k < nKeysS; k++) {
+    if (st.scat >= 0 && S.keyCat[k] !== st.scat) continue;
+    const pass = t === null || (t === "sgg" ? S.keySgg[k] === sggIdx : S.keyEmd[k] === eIdx);
+    for (let j = S.off[k], e = S.off[k + 1]; j < e; j++) {
+      const m = S.mon[j];
+      if (m < st.from || m > st.to) continue;
+      scopeRows += S.cnt[j];
+      if (!pass) continue;
+      const n = S.keyName[k];
+      sum[n] += S.sum[j]; rows[n] += S.cnt[j]; byCat[n * nC + S.keyCat[k]] += S.sum[j];
+      total += S.sum[j]; matchedRows += S.cnt[j]; catTotals[S.keyCat[k]] += S.sum[j];
+    }
+  }
+  const ids = [];
+  for (let n = 0; n < nN; n++) if (rows[n] > 0) ids.push(n);
+  ids.sort((a, b) => sum[b] - sum[a] || (S.names[a] < S.names[b] ? -1 : 1));
+  const repCat = n => { let best = 0; for (let c = 1; c < nC; c++) if (byCat[n * nC + c] > byCat[n * nC + best]) best = c; return S.cats[best]; };
+  return { ids, sum, rows, total, matchedRows, scopeRows, repCat, catTotals };
+}
+function computeReviews(st) {
+  const sum = { total: 0, young: 0, other: 0, suspect: 0, youngSuspect: 0, youngGuide: 0 };
+  for (const m in RV.months) if (+m >= st.from && +m <= st.to) for (const k in sum) sum[k] += RV.months[m][k];
+  const groups = {};
+  for (const kind of ["a", "s", "i"]) {
+    groups[kind] = RV.taxonomy[kind].map(([key, label]) => {
+      const code = kind + ":" + key;
+      let total = 0, young = 0, suspect = 0;
+      const cells = RV.themes[code] || {};
+      for (const m in cells) if (+m >= st.from && +m <= st.to) { total += cells[m][0]; young += cells[m][1]; suspect += cells[m][2]; }
+      // 근거 항목: [월, 순위 점수, 글 번호, 원본 순서, 발췌]
+      const evidence = (RV.evidence[code] || []).filter(e => e[0] >= st.from && e[0] <= st.to)
+        .sort((x, y) => x[1] - y[1] || (RV.posts[x[2]].d < RV.posts[y[2]].d ? 1 : RV.posts[x[2]].d > RV.posts[y[2]].d ? -1 : x[3] - y[3])).slice(0, 5)
+        .map(e => { const p = RV.posts[e[2]]; return { title: p.t, url: p.u, date: p.d, quote: e[4], young: p.y }; });
+      return { key, label, total, young, suspect, evidence };
+    }).sort((x, y) => y.young - x.young || y.total - x.total);
+  }
+  return { ...sum, groups };
+}
+function compute(st) {
+  return { age: computeAge(st), inbound: computeInbound(st), region: computeRegion(st), places: computePlaces(st), search: computeSearch(st), reviews: computeReviews(st) };
+}
+
+/* ---------- 공통 부품 ---------- */
+const tip = $("tooltip");
+function showTip(x, y, title, rows) {
+  tip.replaceChildren();
+  if (title) tip.append(el("div", { class: "t" }, title));
+  for (const r of rows) {
+    const row = el("div", { class: "r" });
+    if (r.color) { const k = el("span", { class: "key-line" }); k.style.background = r.color; row.append(k); }
+    row.append(el("b", {}, r.value), el("span", { class: "l" }, r.label || ""));
+    tip.append(row);
+  }
+  tip.style.display = "block";
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, x + 14)) + "px";
+  tip.style.top = Math.max(8, Math.min(innerHeight - h - 8, y + 14)) + "px";
+}
+const hideTip = () => { tip.style.display = "none"; };
+function emptyBox(msg) { return el("div", { class: "empty" }, el("span", { class: "icon" }, "ⓘ"), el("span", {}, msg)); }
+function tableOf(cols, rows, opt = {}) {
+  const thead = el("thead", {}, el("tr", {}, ...cols.map(c => el("th", { class: (c.num ? "num " : "") + (c.active ? "active" : "") }, c.title))));
+  const tbody = el("tbody");
+  for (const r of rows) {
+    const tr = el("tr", opt.selected && opt.selected(r) ? { class: "sel" } : {});
+    for (const c of cols) {
+      const v = c.get(r);
+      const td = el("td", { class: (c.num ? "num " : "") + (c.clip ? "clip " : "") + (c.active ? "active" : "") }, String(v));
+      if (c.clip) td.title = String(v);
+      if (c.sub) { const s = c.sub(r); td.append(el("div", { class: "cell-sub", title: s }, s)); td.title = v + "\n" + s; }
+      tr.append(td);
+    }
+    tbody.append(tr);
+  }
+  return el("table", {}, thead, tbody);
+}
+function niceScale(v, n = 4) {
+  if (v <= 0) return { max: 1, step: 1 };
+  const raw = v / n, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  const step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+  return { max: Math.ceil(v / step) * step, step };
+}
+function chartWidth(host, min = 300) { return Math.max(min, Math.round(host.clientWidth || host.parentElement.clientWidth || 600)); }
+
+/* 연도별 선그래프: 가로축 월, 세로축 값, 연도마다 선 하나 */
+const YEAR_COLOR = { 2024: "var(--s1)", 2025: "var(--s2)", 2026: "var(--s3)" };
+function yearSeries(pairs) { // pairs: [monthIndex, value]
+  const by = {};
+  for (const [m, v] of pairs) { const y = 2024 + Math.floor(m / 12); (by[y] = by[y] || new Array(12).fill(null))[m % 12] = v; }
+  return Object.keys(by).sort().map(y => ({ id: y, label: y + "년", color: YEAR_COLOR[y], values: by[y] }));
+}
+function lineChart(host, legendHost, pairs, opt) {
+  host.replaceChildren(); legendHost.replaceChildren();
+  if (!pairs.length) { host.append(emptyBox(opt.emptyMsg)); return; }
+  const series = yearSeries(pairs);
+  if (series.length > 1) for (const s of series) {
+    const k = el("span", { class: "key-line" }); k.style.background = s.color;
+    legendHost.append(el("li", {}, k, s.label));
+  } else legendHost.append(el("li", {}, (() => { const k = el("span", { class: "key-line" }); k.style.background = series[0].color; return k; })(), series[0].label));
+  const used = []; for (let i = 0; i < 12; i++) if (series.some(s => s.values[i] !== null)) used.push(i);
+  const lo = used[0], hi = used[used.length - 1];
+  const W = chartWidth(host), H = opt.height || 280, ml = 58, mr = 44, mt = 12, mb = 46;
+  const scale = niceScale(Math.max(...series.flatMap(s => s.values.filter(v => v !== null))));
+  const maxV = scale.max;
+  const x = i => hi === lo ? ml + (W - ml - mr) / 2 : ml + (i - lo) / (hi - lo) * (W - ml - mr);
+  const y = v => mt + (1 - v / maxV) * (H - mt - mb);
+  const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", tabindex: "0", "aria-label": opt.aria });
+  for (let v = 0; v <= maxV + scale.step / 2; v += scale.step) {
+    svg.append(sv("line", { x1: ml, x2: W - mr, y1: y(v), y2: y(v), stroke: v ? "var(--grid)" : "var(--axis)", "stroke-width": 1 }));
+    svg.append(sv("text", { x: ml - 6, y: y(v) + 4, "text-anchor": "end", class: "axis-text" }, compact(v)));
+  }
+  const step = W < 420 && hi - lo > 6 ? 2 : 1;
+  for (let i = lo; i <= hi; i += step) svg.append(sv("text", { x: x(i), y: H - mb + 16, "text-anchor": "middle", class: "axis-text" }, (i + 1) + "월"));
+  svg.append(sv("text", { x: (ml + W - mr) / 2, y: H - 6, "text-anchor": "middle", class: "axis-title" }, opt.xTitle));
+  svg.append(sv("text", { transform: `translate(12 ${(mt + H - mb) / 2}) rotate(-90)`, "text-anchor": "middle", class: "axis-title" }, opt.yTitle));
+  for (const s of series) {
+    let d = "", pen = false;
+    s.values.forEach((v, i) => { if (v === null) { pen = false; return; } d += (pen ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1); pen = true; });
+    svg.append(sv("path", { d, fill: "none", stroke: s.color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+    let lastI = 11; while (s.values[lastI] === null) lastI--;
+    svg.append(sv("circle", { cx: x(lastI), cy: y(s.values[lastI]), r: 4, fill: s.color, stroke: "var(--surface)", "stroke-width": 2 }));
+  }
+  const ends = series.map(s => { let i = 11; while (s.values[i] === null) i--; return { s, i, py: y(s.values[i]) }; }).sort((a, b) => a.py - b.py);
+  const overlap = ends.some((e, k) => k && e.i === ends[k - 1].i && e.py - ends[k - 1].py < 14);
+  if (series.length > 1 && !overlap) for (const e of ends) svg.append(sv("text", { x: x(e.i) + 8, y: e.py + 4, class: "bar-value" }, e.s.id));
+  const cross = sv("line", { y1: mt, y2: H - mb, stroke: "var(--axis)", "stroke-width": 1, visibility: "hidden" });
+  const dots = sv("g", { visibility: "hidden" });
+  svg.append(cross, dots);
+  const show = (i, cx, cy) => {
+    cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("visibility", "visible");
+    dots.replaceChildren(); dots.setAttribute("visibility", "visible");
+    const rows = [];
+    for (const s of series) if (s.values[i] !== null) {
+      dots.append(sv("circle", { cx: x(i), cy: y(s.values[i]), r: 4, fill: s.color, stroke: "var(--surface)", "stroke-width": 2 }));
+      rows.push({ color: s.color, value: fmt(s.values[i]) + "명", label: s.label });
+    }
+    showTip(cx, cy, (i + 1) + "월", rows);
+  };
+  const hide = () => { cross.setAttribute("visibility", "hidden"); dots.setAttribute("visibility", "hidden"); hideTip(); };
+  const hit = sv("rect", { x: ml - 12, y: mt, width: W - ml - mr + 24, height: H - mt - mb, fill: "transparent" });
+  const nearest = ev => {
+    const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width;
+    let best = used[0]; for (const i of used) if (Math.abs(x(i) - px) < Math.abs(x(best) - px)) best = i;
+    return best;
+  };
+  hit.addEventListener("pointermove", ev => show(nearest(ev), ev.clientX, ev.clientY));
+  hit.addEventListener("pointerleave", hide);
+  svg.append(hit);
+  let cur = 0;
+  svg.addEventListener("focus", () => { const r = svg.getBoundingClientRect(); show(used[cur], r.left + r.width / 2, r.top + 20); });
+  svg.addEventListener("blur", hide);
+  svg.addEventListener("keydown", ev => {
+    if (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft") return;
+    ev.preventDefault();
+    cur = Math.max(0, Math.min(used.length - 1, cur + (ev.key === "ArrowRight" ? 1 : -1)));
+    const r = svg.getBoundingClientRect(); show(used[cur], r.left + r.width / 2, r.top + 20);
+  });
+  host.append(svg);
+}
+
+/* 가로 막대: 값은 막대 끝에 표시 */
+function hbars(host, items, opt) {
+  host.replaceChildren();
+  if (!items.length) { host.append(emptyBox(opt.emptyMsg || "표시할 자료가 없습니다.")); return; }
+  const W = chartWidth(host), lw = opt.labelWidth || 70, rw = 66, row = 22, bh = 14, mt = 4, mb = 40;
+  const H = mt + items.length * row + mb;
+  const scale = niceScale(Math.max(...items.map(i => i.value), 1), W < 420 ? 2 : 4);
+  const maxV = scale.max;
+  const x = v => lw + v / maxV * (W - lw - rw);
+  const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opt.aria });
+  for (let v = 0; v <= maxV + scale.step / 2; v += scale.step) {
+    svg.append(sv("line", { x1: x(v), x2: x(v), y1: mt, y2: H - mb, stroke: v ? "var(--grid)" : "var(--axis)", "stroke-width": 1 }));
+    svg.append(sv("text", { x: x(v), y: H - mb + 14, "text-anchor": "middle", class: "axis-text" }, compact(v)));
+  }
+  svg.append(sv("text", { x: (lw + W - rw) / 2, y: H - 6, "text-anchor": "middle", class: "axis-title" }, opt.axisTitle));
+  items.forEach((it, i) => {
+    const yy = mt + i * row, g = sv("g", { class: "bar-g" + (it.onClick ? " clickable" : ""), tabindex: "0", role: it.onClick ? "button" : "img", "aria-label": `${it.label}: ${fmt(it.value)}${opt.unit}` });
+    g.append(sv("rect", { x: 0, y: yy, width: W, height: row, class: "hit" }));
+    g.append(sv("text", { x: lw - 6, y: yy + 15, "text-anchor": "end", class: "bar-label", "font-weight": it.strong ? 700 : 400 }, it.label));
+    const x1 = x(it.value), w = x1 - lw, top = yy + (row - bh) / 2, r = Math.min(4, w);
+    if (w > 0) g.append(sv("path", { class: "mark", d: `M${lw} ${top}H${x1 - r}Q${x1} ${top} ${x1} ${top + r}V${top + bh - r}Q${x1} ${top + bh} ${x1 - r} ${top + bh}H${lw}Z`, fill: it.color, opacity: it.dim ? .35 : 1 }));
+    g.append(sv("text", { x: x1 + 5, y: yy + 15, class: "bar-value" }, compact(it.value)));
+    const tipFor = (cx, cy) => showTip(cx, cy, it.label + (it.sub ? " · " + it.sub : ""), [{ color: it.color, value: fmt(it.value) + opt.unit, label: opt.valueLabel || "" }]);
+    g.addEventListener("pointermove", ev => tipFor(ev.clientX, ev.clientY));
+    g.addEventListener("pointerleave", hideTip);
+    g.addEventListener("focus", () => { const r2 = g.getBoundingClientRect(); tipFor(r2.left + 80, r2.top); });
+    g.addEventListener("blur", hideTip);
+    if (it.onClick) {
+      g.addEventListener("click", it.onClick);
+      g.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); it.onClick(); } });
+    }
+    svg.append(g);
+  });
+  host.append(svg);
+}
+
+/* 지도: 읍면동 경계를 값으로 색칠. 추자면은 멀리 떨어져 있어 왼쪽 위 상자로 옮겨 그린다 */
+const CHUJA = emdIndex["추자면"];
+const mapProj = (() => {
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  E.geo.forEach((rings, i) => { if (i !== CHUJA) for (const r of rings) for (const [x, y] of r) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); } });
+  const cos = Math.cos((y0 + y1) / 2 * Math.PI / 180), W = 720, pad = 8, k = (W - pad * 2) / ((x1 - x0) * cos), H = Math.round((y1 - y0) * k + pad * 2);
+  let cx0 = 1e9, cx1 = -1e9, cy0 = 1e9, cy1 = -1e9;
+  for (const r of E.geo[CHUJA]) for (const [x, y] of r) { cx0 = Math.min(cx0, x); cx1 = Math.max(cx1, x); cy0 = Math.min(cy0, y); cy1 = Math.max(cy1, y); }
+  const shrink = .55, insetW = (cx1 - cx0) * cos * k * shrink, insetH = (cy1 - cy0) * k * shrink, box = { x: 6, y: 6, w: Math.max(insetW + 16, 150), h: insetH + 30 };
+  const main = ([x, y]) => [pad + (x - x0) * cos * k, pad + (y1 - y) * k];
+  const inset = ([x, y]) => [box.x + (box.w - insetW) / 2 + (x - cx0) * cos * k * shrink, box.y + 22 + (cy1 - y) * k * shrink];
+  const paths = E.geo.map((rings, i) => rings.map(r => "M" + r.map(p => (i === CHUJA ? inset(p) : main(p)).map(v => v.toFixed(1)).join(" ")).join("L") + "Z").join(""));
+  const centers = E.geo.map((rings, i) => {
+    const big = rings.reduce((a, r) => r.length > a.length ? r : a, rings[0]).map(i === CHUJA ? inset : main);
+    return [big.reduce((a, p) => a + p[0], 0) / big.length, big.reduce((a, p) => a + p[1], 0) / big.length];
+  });
+  return { W, H, box, paths, centers };
+})();
+const QUANT = ["var(--q1)", "var(--q2)", "var(--q3)", "var(--q4)", "var(--q5)"];
+function quantileBreaks(values) {
+  const v = [...values].sort((a, b) => a - b), out = [];
+  for (let q = 1; q < 5; q++) out.push(v[Math.min(v.length - 1, Math.floor(q / 5 * v.length))]);
+  return out;
+}
+function renderMap(st, R) {
+  const host = $("map"), scale = $("map-scale");
+  host.replaceChildren(); scale.replaceChildren();
+  if (!R.hasData) host.append(emptyBox("선택한 기간에는 읍면동 방문 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-08)"));
+  const scopeVals = E.names.map((_, i) => R.val[i]).filter((_, i) => R.inScope[i]);
+  const br = quantileBreaks(scopeVals);
+  const classOf = v => { let c = 0; while (c < 4 && v >= br[c]) c++; return c; };
+  const svg = sv("svg", { viewBox: `0 0 ${mapProj.W} ${mapProj.H}`, role: "group", "aria-label": "제주 읍면동별 방문객 수 지도" });
+  const b = mapProj.box;
+  svg.append(sv("rect", { x: b.x, y: b.y, width: b.w, height: b.h, rx: 4, fill: "none", stroke: "var(--axis)", "stroke-width": 1 }));
+  svg.append(sv("text", { x: b.x + 6, y: b.y + 14, class: "axis-text" }, "추자면(위치 이동·축소)"));
+  const selected = st.region.startsWith("emd:") ? emdIndex[st.region.slice(4)] : -1;
+  E.names.forEach((name, i) => {
+    const on = R.inScope[i] && R.hasData;
+    const p = sv("path", { class: "region" + (i === selected ? " selected" : ""), d: mapProj.paths[i], fill: on ? QUANT[classOf(R.val[i])] : "var(--land)", tabindex: "0", role: "button", "data-name": name, "aria-label": `${name}: ${R.hasData ? fmt(R.val[i]) + "명" : "자료 없음"}` });
+    const tipFor = (cx, cy) => showTip(cx, cy, E.sgg[i] + " " + name, [{ value: R.hasData ? fmt(R.val[i]) + "명" : "자료 없음", label: VISITOR_LABEL[st.visitor] + " 방문객" }]);
+    p.addEventListener("pointermove", ev => tipFor(ev.clientX, ev.clientY));
+    p.addEventListener("pointerleave", hideTip);
+    p.addEventListener("focus", () => { const r = p.getBoundingClientRect(); tipFor(r.left, r.top); });
+    p.addEventListener("blur", hideTip);
+    const go = () => setRegion(st.region === "emd:" + name ? "all" : "emd:" + name);
+    p.addEventListener("click", go);
+    p.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); go(); } });
+    svg.append(p);
+  });
+  if (selected >= 0) svg.append(svg.querySelector(`path[data-name="${E.names[selected]}"]`));
+  if (R.hasData) {
+    const labels = new Set(R.items.slice(0, 3).map(o => o.i));
+    if (selected >= 0) labels.add(selected);
+    for (const i of labels) svg.append(sv("text", { x: mapProj.centers[i][0], y: mapProj.centers[i][1] + 4, "text-anchor": "middle", class: "map-label" }, E.names[i]));
+    const lows = [Math.min(...scopeVals), ...br], highs = [...br, Math.max(...scopeVals)];
+    QUANT.forEach((c, k) => {
+      const sw = el("span", { class: "key-box" }); sw.style.background = c;
+      scale.append(el("li", {}, sw, `${compact(lows[k])} ~ ${compact(highs[k])}명`));
+    });
+    if (scopeSgg(st.region)) { const sw = el("span", { class: "key-box" }); sw.style.background = "var(--land)"; scale.append(el("li", {}, sw, "지역 필터 밖")); }
+  }
+  host.append(svg);
+}
+
+/* 워드클라우드: 나선형으로 겹치지 않게 배치 */
+const measureCtx = document.createElement("canvas").getContext("2d");
+function layoutCloud(words, W, H) {
+  const placed = [], maxV = words[0].value, minV = words[words.length - 1].value;
+  const fam = getComputedStyle(document.body).fontFamily;
+  const hits = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  let skipped = 0;
+  for (const w of words) {
+    const t = maxV === minV ? 1 : Math.sqrt((w.value - minV) / (maxV - minV));
+    let size = Math.round((W < 480 ? 11 : 12) + t * (W < 480 ? 13 : 22));
+    let text = w.name;
+    measureCtx.font = `600 ${size}px ${fam}`;
+    let tw = measureCtx.measureText(text).width;
+    while (tw > W - 8 && size > 11) { size--; measureCtx.font = `600 ${size}px ${fam}`; tw = measureCtx.measureText(text).width; }
+    while (tw > W - 8 && text.length > 4) { text = text.slice(0, -2); tw = measureCtx.measureText(text + "…").width; }
+    if (text !== w.name) text += "…";
+    const h = size * 1.2;
+    let done = false;
+    for (let a = 0; a < 12000 && !done; a++) {
+      const ang = a * 0.3, rad = 2.2 * Math.sqrt(a);
+      const cx = W / 2 + rad * Math.cos(ang) * 1.5, cy = H / 2 + rad * Math.sin(ang) * .85;
+      const box = { x: cx - tw / 2 - 2, y: cy - h / 2 - 1, w: tw + 4, h: h + 2 };
+      if (box.x < 0 || box.y < 0 || box.x + box.w > W || box.y + box.h > H) continue;
+      if (placed.some(p => hits(box, p.box))) continue;
+      placed.push({ word: w, text, size, cx, cy, box });
+      done = true;
+    }
+    if (!done) skipped++;
+  }
+  return { placed, skipped };
+}
+function renderCloud(st, Q) {
+  const host = $("wordcloud"), note = $("cloud-note");
+  host.replaceChildren();
+  if (!Q.ids.length) { host.append(emptyBox(emptySearchMsg(st))); note.textContent = ""; return; }
+  const words = Q.ids.slice(0, 60).map(n => ({ name: S.names[n], value: Q.sum[n], cat: Q.repCat(n) }));
+  const W = chartWidth(host), H = W < 480 ? 420 : 400;
+  const { placed, skipped } = layoutCloud(words, W, H);
+  const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "검색어 워드클라우드. 같은 내용을 키워드 빈도 표에서 볼 수 있음" });
+  for (const p of placed) {
+    const t = sv("text", { x: p.cx, y: p.cy + p.size * .35, "text-anchor": "middle", "font-size": p.size }, p.text);
+    t.addEventListener("pointermove", ev => showTip(ev.clientX, ev.clientY, p.word.name + " · " + p.word.cat, [{ value: fmt(p.word.value), label: "수치 합" }]));
+    t.addEventListener("pointerleave", hideTip);
+    svg.append(t);
+  }
+  host.append(svg);
+  note.textContent = `글자가 클수록 수치 합이 큼. 상위 ${words.length}개 중 ${placed.length}개 표시` + (skipped ? ` (자리 부족으로 ${skipped}개 생략, 표에는 있음)` : "") + ".";
+}
+function emptySearchMsg(st) {
+  if (![...monthsWith.search].some(m => m >= st.from && m <= st.to)) return "선택한 기간에는 검색어 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-08)";
+  return `주소에서 "${regionLabel(st.region)}"을(를) 찾을 수 있는 검색어가 없습니다. 비짓제주에는 읍면동 열이 없어, 동 지역은 집계되지 않을 수 있습니다.`;
+}
+
+/* ---------- 화면 그리기 ---------- */
+function kpi(host, label, valueNode, sub) {
+  host.replaceChildren(el("p", { class: "kpi-label" }, label), valueNode, el("p", { class: "kpi-sub" }, sub));
+}
+const kv = t => el("p", { class: "kpi-value" }, t);
+const kna = t => el("p", { class: "kpi-value" }, el("span", { class: "kpi-na" }, "ⓘ " + t));
+let model = null;
+
+function render() {
+  const st = state;
+  model = compute(st);
+  const { age: A, inbound: I, region: R, search: Q } = model;
+  const sx = SEX_LABEL[st.sex];
+
+  $("meta-period").textContent = `${mLabel(st.from)} ~ ${mLabel(st.to)} (필터로 변경). 기본값은 모든 자료가 겹치는 2024-01 ~ 2026-08.`;
+  renderStatus(st);
+
+  // 핵심 지표
+  kpi($("kpi-visitors"), `20대 ${sx}제주 방문객 수 (선택 기간)`, A.months.length ? kv(fmt(A.total) + "명") : kna("선택 기간에 자료 없음"),
+    A.months.length ? `${mLabel(A.months[0])} ~ ${mLabel(A.months[A.months.length - 1])}, ${A.months.length}개월 합계. 지역 필터 미적용(자료에 지역 열 없음)` : "20대 자료 기간: 2024-01 ~ 2026-08");
+  if (A.mom.state === "ok") kpi($("kpi-mom"), "전년 동월 대비 증감률", kv(signed(A.mom.rate)), `${mLabel(A.mom.month)} ${fmt(A.mom.cur)}명 / ${mLabel(A.mom.prevMonth)} ${fmt(A.mom.prev)}명`);
+  else if (A.mom.state === "noprev") kpi($("kpi-mom"), "전년 동월 대비 증감률", kna("계산 불가"), `${mLabel(A.mom.month)}의 1년 전 자료가 없음 (2023년 자료 없음)`);
+  else kpi($("kpi-mom"), "전년 동월 대비 증감률", kna("계산 불가"), "선택 기간에 20대 자료 없음");
+  if (A.period.state === "ok") kpi($("kpi-period"), "전년 동기 대비 증감률", kv(signed(A.period.rate)), `1년 전 자료가 있는 ${A.period.months}개월만 짝지어 비교 (${mLabel(A.period.first)} ~ ${mLabel(A.period.last)})`);
+  else if (A.period.state === "noprev") kpi($("kpi-period"), "전년 동기 대비 증감률", kna("계산 불가"), "선택 기간 모든 달의 1년 전 자료가 없음");
+  else kpi($("kpi-period"), "전년 동기 대비 증감률", kna("계산 불가"), "선택 기간에 20대 자료 없음");
+  if (A.share !== null) kpi($("kpi-share"), "20대 비중", kv(pct(A.share)), `${st.sex === "all" ? "전체" : sx.trim()} 연령 합계 중`);
+  else kpi($("kpi-share"), "20대 비중", kna("계산 불가"), "자료 없음");
+
+  const scatName = st.scat >= 0 ? S.cats[st.scat] : "장소";
+  if (Q.ids.length) {
+    const top = Q.ids[0];
+    kpi($("kpi-search"), `가장 많이 검색된 ${scatName}`, kv(S.names[top]), `수치 합 ${fmt(Q.sum[top])} · 분류 ${Q.repCat(top)} · 범위: ${regionLabel(st.region)}. 전체 이용자 기준이며, 실제 방문이나 선호를 뜻하지 않음.`);
+  } else kpi($("kpi-search"), `가장 많이 검색된 ${scatName}`, kna("자료 없음"), emptySearchMsg(st));
+
+  // 선그래프
+  $("trend-title").textContent = `20대 ${sx}월별 방문객 수`;
+  $("trend-scope").textContent = `적용: 기간, 성별 / 미적용: 지역(자료에 지역 열 없음) / 단위: 명 / 연도별 선`;
+  lineChart($("chart-trend"), $("trend-legend"), A.months.map(m => [m, A.series.get(m)]), { height: 460, xTitle: "월", yTitle: "방문객 수(명)", emptyMsg: "선택한 기간에는 20대 방문 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-08)", aria: `20대 ${sx}월별 방문객 수 선그래프` });
+  $("table-trend").replaceChildren(A.months.length ? tableOf([
+    { title: "연월", get: m => mLabel(m) }, { title: "남성(M)", num: 1, get: m => fmt(A.sexRows[m].M) }, { title: "여성(W)", num: 1, get: m => fmt(A.sexRows[m].W) },
+    { title: "합계", num: 1, get: m => fmt(A.sexRows[m].M + A.sexRows[m].W) },
+    { title: "전년 동월 대비", num: 1, get: m => { const a = A.sexRows[m].M + A.sexRows[m].W, p = D.age.filter(r => r[0] === m - 12 && r[2] === 20).reduce((s, r) => s + r[3], 0); return p ? signed((a / p - 1) * 100) : "계산 불가"; } },
+  ], [...A.months].reverse()) : emptyBox("자료 없음"));
+
+  // 연령대
+  $("age-scope").textContent = "적용: 기간, 성별 / 미적용: 지역(자료에 지역 열 없음) / 단위: 명 / 20대를 진하게 표시";
+  const ageKeys = Object.keys(A.ages).map(Number).sort((a, b) => a - b);
+  hbars($("chart-age"), ageKeys.map(a => ({ label: a + "대", value: A.ages[a], color: a === 20 ? "var(--s1)" : "var(--mute-mark)", strong: a === 20 })), { axisTitle: "방문객 수(명)", unit: "명", labelWidth: 44, emptyMsg: "선택한 기간에는 연령대 자료가 없습니다.", aria: "연령대별 방문객 수 막대그래프" });
+  $("table-age").replaceChildren(ageKeys.length ? tableOf([{ title: "연령", get: a => a + "대" }, { title: "방문객 수(명)", num: 1, get: a => fmt(A.ages[a]) }, { title: "비중", num: 1, get: a => pct(A.ages[a] / A.allAges * 100) }], ageKeys) : emptyBox("자료 없음"));
+
+  // 입도
+  const vlabel = VISITOR_LABEL[st.visitor];
+  $("inbound-title").textContent = `입도 관광객 월별 추이 (${vlabel})`;
+  $("inbound-scope").textContent = "적용: 기간, 방문객 구분 / 미적용: 지역·성별(자료에 해당 열 없음) / 단위: 명 / 연도별 선";
+  lineChart($("chart-inbound"), $("inbound-legend"), I.rows.map(r => [r[0], r[I.col]]), { xTitle: "월", yTitle: "입도 관광객 수(명)", emptyMsg: "선택한 기간에는 입도 관광객 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-08)", aria: "입도 관광객 월별 선그래프" });
+  $("table-inbound").replaceChildren(I.rows.length ? tableOf([{ title: "연월", get: r => mLabel(r[0]) }, { title: "내국인", num: 1, get: r => fmt(r[1]) }, { title: "외국인", num: 1, get: r => fmt(r[2]) }, { title: "전체", num: 1, get: r => fmt(r[3]) }], [...I.rows].reverse()) : emptyBox("자료 없음"));
+
+  renderPlaces();
+
+  // 지역
+  $("map-title").textContent = `읍면동별 ${vlabel} 방문객 수 지도`;
+  $("map-scope").textContent = "적용: 기간, 지역, 방문객 구분 / 단위: 명";
+  renderMap(st, R);
+  $("region-title").textContent = `읍면동별 ${vlabel} 방문객 수`;
+  $("region-scope").textContent = "적용: 기간, 지역, 방문객 구분 / 단위: 명 / 막대를 누르면 지역 필터가 바뀜";
+  $("region-lede").replaceChildren();
+  if (R.hasData) $("region-lede").append(`${regionLabel(st.region)} 합계 `, el("b", {}, fmt(R.selected) + "명"), ` · 43개 읍면동 합계의 ${pct(R.all ? R.selected / R.all * 100 : 0)}`);
+  const legend = $("region-legend"); legend.replaceChildren();
+  const SGG_COLOR = { "제주시": "var(--s1)", "서귀포시": "var(--s2)" };
+  for (const s of Object.keys(SGG_COLOR)) { if (scopeSgg(st.region) && scopeSgg(st.region) !== s) continue; const k = el("span", { class: "key-box" }); k.style.background = SGG_COLOR[s]; legend.append(el("li", {}, k, s)); }
+  const sel = st.region.startsWith("emd:") ? st.region.slice(4) : null;
+  let shown = R.items.slice(0, 15);
+  if (sel && !shown.some(o => o.name === sel)) shown = [...shown.slice(0, 14), R.items.find(o => o.name === sel)];
+  hbars($("chart-region"), R.hasData ? shown.map(o => ({ label: o.name, value: o.value, sub: o.sgg, color: SGG_COLOR[o.sgg], dim: sel && o.name !== sel, strong: o.name === sel, onClick: () => setRegion(st.region === "emd:" + o.name ? "all" : "emd:" + o.name) })) : [], { axisTitle: `${vlabel} 방문객 수(명), 상위 ${shown.length}개 / 범위 안 ${R.items.length}개`, unit: "명", labelWidth: 64, emptyMsg: "선택한 기간에는 읍면동 방문 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-08)", aria: "읍면동별 방문객 수 막대그래프" });
+  $("table-region").replaceChildren(R.hasData ? tableOf([
+    { title: "순위", num: 1, get: o => R.items.indexOf(o) + 1 }, { title: "읍면동", get: o => o.name }, { title: "시군구", get: o => o.sgg },
+    { title: "내국인", num: 1, active: st.visitor === "dom", get: o => fmt(o.dom) }, { title: "외국인", num: 1, active: st.visitor === "for", get: o => fmt(o.for) }, { title: "총 방문객", num: 1, active: st.visitor === "tot", get: o => fmt(o.tot) },
+  ], R.items, { selected: o => o.name === sel }) : emptyBox("자료 없음"));
+
+  // 검색어
+  const regionNote = st.region === "all" ? "" : ` / 지역: 주소에 "${regionLabel(st.region)}"이(가) 확인되는 행만 (원본 ${fmt(Q.matchedRows)}행 / 조건 안 ${fmt(Q.scopeRows)}행)`;
+  $("cloud-title").textContent = `검색어 워드클라우드${st.scat >= 0 ? " (" + S.cats[st.scat] + ")" : ""}`;
+  $("cloud-scope").textContent = `적용: 기간, 검색 분류, 지역(주소 기준)${regionNote}`;
+  renderCloud(st, Q);
+  renderKeywords();
+  renderReviews(st, model.reviews);
+  renderAnalysis(model, st);
+}
+
+const dateText = d => `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}`;
+function renderReviews(st, V) {
+  $("review-scope").textContent = "적용: 기간 / 미적용: 지역·성별 등 나머지 필터(자료에 해당 열 없음) / 단위: 글 수";
+  const lede = $("review-lede"); lede.replaceChildren();
+  lede.append(`${mLabel(st.from)} ~ ${mLabel(st.to)} 제주 여행 관련 글 `, el("b", {}, fmt(V.total) + "건"), " · '20대' 언급 글 ", el("b", {}, fmt(V.young) + "건"), ` · 협찬 의심 ${fmt(V.suspect)}건 ('20대' 언급 글 중 ${fmt(V.youngSuspect)}건)`);
+  for (const kind of ["a", "s", "i"]) {
+    const host = $("review-" + kind); host.replaceChildren();
+    if (!V.total) { host.append(emptyBox("선택한 기간에는 수집된 글이 없습니다.")); continue; }
+    for (const it of V.groups[kind]) {
+      const box = el("details", { class: "rv-item", "data-theme": kind + ":" + it.key });
+      box.append(el("summary", {}, el("span", { class: "rv-name" }, it.label), el("span", { class: "rv-count" }, `'20대' 언급 ${fmt(it.young)}건 · 전체 ${fmt(it.total)}건` + (it.suspect ? ` (협찬 의심 ${fmt(it.suspect)}건 포함)` : ""))));
+      if (it.evidence.length) {
+        const list = el("ol", { class: "rv-links" });
+        for (const e of it.evidence) {
+          const a = el("a", { href: e.url, target: "_blank", rel: "noopener noreferrer" }, e.title);
+          list.append(el("li", {}, a, ` (${dateText(e.date)}${e.young ? ", '20대' 언급" : ""})`, el("span", { class: "rv-quote" }, e.quote)));
+        }
+        box.append(list);
+        if (it.evidence.length < 3) box.append(el("p", { class: "note" }, `이 기간의 근거 글은 ${it.evidence.length}건뿐입니다.`));
+      } else box.append(el("p", { class: "note" }, "이 기간에 해당하는 글이 없습니다."));
+      host.append(box);
+    }
+  }
+  $("review-note").textContent = `'20대' 언급 글은 제목이나 요약에서 여행자 본인·일행을 20대로 표현한 글이며, 작성자 연령을 확인한 것이 아닙니다. 회상이나 다른 사람 묘사로 20대가 나오는 글 ${fmt(V.other)}건은 뺐고, 안내성 제목의 글 ${fmt(V.youngGuide)}건은 포함했습니다. 주제는 낱말 규칙으로 분류했습니다. 만족·불편 항목은 항목당 14건 안팎의 표본을 읽어 보니 3할 정도가 오분류여서(정식 측정 아님), 건수는 대략의 크기로만 보고 비율이나 월별 추이로 읽으면 안 됩니다. 활동·만족 건수에는 불만 검색어로만 모은 글을 넣지 않았습니다. 협찬 표시는 대개 본문 끝에 있어 요약 기준 건수는 실제보다 적습니다.`;
+  $("review-source").textContent = `네이버 블로그 검색 API의 제목·요약 기준, 수집 기간 ${dateText(RV.firstDate)}~${dateText(RV.lastDate)}, 총 ${fmt(RV.totalPosts)}건`;
+}
+
+function renderStatus(st) {
+  const box = $("status");
+  const parts = [`${mLabel(st.from)} ~ ${mLabel(st.to)}`, regionLabel(st.region)];
+  if (st.sex !== "all") parts.push(SEX_LABEL[st.sex].trim());
+  if (st.visitor !== "tot") parts.push(VISITOR_LABEL[st.visitor]);
+  if (st.arrive !== "arr") parts.push(ARRIVE_LABEL[st.arrive]);
+  if (st.scat >= 0) parts.push("검색 " + S.cats[st.scat]);
+  if (st.pcat >= 0) parts.push("장소 " + P.cats[st.pcat]);
+  box.replaceChildren(el("b", {}, "적용 중: "), parts.join(" · "));
+  if (st.to > COMMON_END) box.append(el("span", { class: "warn" }, `ⓘ ${mLabel(COMMON_END + 1)}은(는) 인기 장소와 온라인 후기에만, ${mLabel(COMMON_END + 2)}은(는) 온라인 후기에만 있습니다. 다른 자료는 ${mLabel(COMMON_END)}까지만 집계합니다.`));
+}
+
+function renderPlaces() {
+  const st = state, L = model.places;
+  const q = state.placeQ.trim().toLowerCase();
+  const ids = q ? L.ids.filter(g => P.names[groupName[g]].toLowerCase().includes(q)) : L.ids;
+  const rankOf = q ? new Map(L.ids.map((g, i) => [g, i + 1])) : null;
+  const pages = Math.max(1, Math.ceil(ids.length / PAGE));
+  state.placePage = Math.min(state.placePage, pages - 1);
+  const start = state.placePage * PAGE, slice = ids.slice(start, start + PAGE);
+  $("place-title").textContent = `인기 장소 순위 (${ARRIVE_LABEL[st.arrive]} 기준)`;
+  $("place-scope").textContent = "적용: 기간, 지역, 도착 구분, 장소 카테고리 / 단위: 건 / 연령 정보 없음(전체 관광객·도민)";
+  $("place-total").textContent = `${regionLabel(st.region)} 도착건수 합 ${fmt(L.tArr)}건`;
+  const host = $("table-places"), pager = $("place-pager");
+  if (!ids.length) {
+    host.replaceChildren(emptyBox(L.ids.length ? "검색어와 일치하는 목적지가 없습니다." : "선택한 조건에 맞는 인기 장소 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-09)"));
+    pager.replaceChildren();
+    return;
+  }
+  const details = new Map(slice.map(g => [g, placeDetail(st, g)]));
+  host.replaceChildren(tableOf([
+    { title: "순위", num: 1, get: g => rankOf ? rankOf.get(g) : ids.indexOf(g, start) + 1 },
+    { title: "목적지명 / 주소", clip: 1, get: g => P.names[groupName[g]], sub: g => details.get(g).addr + (details.get(g).addrCount > 1 ? ` 외 ${details.get(g).addrCount - 1}곳` : "") },
+    { title: "읍면동명", get: g => E.names[groupEmd[g]] },
+    { title: "카테고리", clip: 1, get: g => details.get(g).cat },
+    { title: "도착건수", num: 1, active: st.arrive === "arr", get: g => fmt(L.arr[g]) },
+    { title: "관광객", num: 1, active: st.arrive === "tour", get: g => fmt(L.tour[g]) },
+    { title: "도민", num: 1, active: st.arrive === "res", get: g => fmt(L.res[g]) },
+  ], slice));
+  pagerInto(pager, start, slice.length, ids.length, state.placePage, pages, p => { state.placePage = p; renderPlaces(); }, "place");
+}
+function pagerInto(host, start, n, total, page, pages, go, id) {
+  host.replaceChildren(
+    el("span", { id: id + "-range" }, `${fmt(start + 1)} - ${fmt(start + n)} / ${fmt(total)}`),
+    el("button", { class: "btn", type: "button", "aria-label": "이전 쪽", ...(page === 0 ? { disabled: "" } : {}), onclick: () => go(page - 1) }, "‹"),
+    el("button", { class: "btn", type: "button", "aria-label": "다음 쪽", id: id + "-next", ...(page >= pages - 1 ? { disabled: "" } : {}), onclick: () => go(page + 1) }, "›"));
+}
+function renderKeywords() {
+  const st = state, Q = model.search;
+  const q = state.wordQ.trim().toLowerCase();
+  const ids = q ? Q.ids.filter(n => S.names[n].toLowerCase().includes(q)) : Q.ids;
+  const rankOf = q ? new Map(Q.ids.map((n, i) => [n, i + 1])) : null;
+  const pages = Math.max(1, Math.ceil(ids.length / PAGE));
+  state.wordPage = Math.min(state.wordPage, pages - 1);
+  const start = state.wordPage * PAGE, slice = ids.slice(start, start + PAGE);
+  $("word-total").textContent = `수치 합 ${fmt(Q.total)}`;
+  const host = $("table-keywords"), pager = $("word-pager");
+  if (!ids.length) {
+    host.replaceChildren(emptyBox(Q.ids.length ? "검색어와 일치하는 키워드가 없습니다." : emptySearchMsg(st)));
+    pager.replaceChildren();
+    return;
+  }
+  host.replaceChildren(tableOf([
+    { title: "순위", num: 1, get: n => rankOf ? rankOf.get(n) : ids.indexOf(n, start) + 1 },
+    { title: "키워드", clip: 1, get: n => S.names[n] },
+    { title: "분류", get: n => Q.repCat(n) },
+    { title: "수치 합", num: 1, active: 1, get: n => fmt(Q.sum[n]) },
+    { title: "비중", num: 1, get: n => pct(Q.sum[n] / Q.total * 100, 2) },
+    { title: "원본 행 수", num: 1, get: n => fmt(Q.rows[n]) },
+  ], slice));
+  pagerInto(pager, start, slice.length, ids.length, state.wordPage, pages, p => { state.wordPage = p; renderKeywords(); }, "word");
+}
+
+function li(list, text, tag) {
+  const item = el("li", {}, text);
+  if (tag) item.append(" ", el("span", { class: "tag" }, tag));
+  list.append(item);
+}
+const BASE = (() => compute(DEFAULTS))();
+const ratioRange = (() => {
+  const inb = new Map(D.inbound.map(r => [r[0], r[3]])), a = new Map(), e = new Map();
+  for (const r of D.age) a.set(r[0], (a.get(r[0]) || 0) + r[3]);
+  for (const r of E.rows) e.set(r[0], (e.get(r[0]) || 0) + r[4]);
+  const span = m => { const v = [...m].map(([k, x]) => x / inb.get(k)); return Math.min(...v).toFixed(1) + " ~ " + Math.max(...v).toFixed(1); };
+  return { age: span(a), emd: span(e) };
+})();
+function renderAnalysis(m, st) {
+  const facts = $("an-facts"); facts.replaceChildren();
+  const A = m.age, R = m.region, L = m.places, Q = m.search;
+  const sx = SEX_LABEL[st.sex];
+  if (A.months.length) {
+    li(facts, `20대 ${sx}방문객은 ${fmt(A.total)}명이고, ${st.sex === "all" ? "전체" : sx.trim()} 연령 합계의 ${pct(A.share)}이다.`, "연령대 자료");
+    li(facts, `월 최고는 ${mLabel(A.peak)}의 ${fmt(A.series.get(A.peak))}명, 최저는 ${mLabel(A.low)}의 ${fmt(A.series.get(A.low))}명이다.`, "연령대 자료");
+    if (A.period.state === "ok") li(facts, `1년 전 자료가 있는 ${A.period.months}개월을 짝지어 비교하면 ${signed(A.period.rate)}이다.`, "연령대 자료");
+    else li(facts, "전년 대비 증감은 1년 전 자료가 없어 계산할 수 없다.", "연령대 자료");
+  } else li(facts, "선택 기간에는 20대 방문 자료가 없다.");
+  if (R.hasData) li(facts, `${VISITOR_LABEL[st.visitor]} 방문객이 많은 읍면동은 ` + R.items.slice(0, 3).map(o => `${o.name} ${fmt(o.value)}명`).join(", ") + "이다.", "읍면동 자료");
+  else li(facts, "선택 기간에는 읍면동 방문 자료가 없다.");
+  if (L.ids.length) li(facts, `${ARRIVE_LABEL[st.arrive]} 상위 장소는 ` + L.ids.slice(0, 3).map(g => `${P.names[groupName[g]]} ${fmt(L.measure[g])}건`).join(", ") + "이다.", "인기 장소 자료, 연령 구분 없음");
+  else li(facts, "선택 조건에는 인기 장소 자료가 없다.");
+  if (Q.ids.length) li(facts, "수치 합 상위 검색어는 " + Q.ids.slice(0, 3).map(n => `${S.names[n]} ${fmt(Q.sum[n])}`).join(", ") + "이다.", "비짓제주 자료, 연령 구분 없음");
+  else li(facts, "선택 조건에는 검색어 자료가 없다.");
+  const V = m.reviews;
+  if (V.young) li(facts, `'20대' 언급 글 ${fmt(V.young)}건에서 자주 나온 활동은 ` + V.groups.a.slice(0, 3).map(i => `${i.label} ${fmt(i.young)}건`).join(", ") + "이다.", "블로그 제목·요약, 연령 미확인");
+  else li(facts, "선택 기간에는 '20대' 언급 글이 없다.");
+
+  // 해석과 제안은 필터와 무관하게 기본 조건의 수치로 쓴다
+  $("an-base").textContent = "기본 조건(2024-01 ~ 2026-08, 제주 전체) 기준 고정, 추정 포함";
+  const a20 = BASE.age.series;
+  const avgOf = mo => { const v = [...a20.entries()].filter(([k]) => k % 12 === mo - 1).map(e => e[1]); return v.reduce((x, y) => x + y, 0) / v.length; };
+  const sumRange = (lo, hi) => { let s = 0; for (let i = lo; i <= hi; i++) s += a20.get(i); return s; };
+  const inb = (lo, hi, c) => D.inbound.filter(r => r[0] >= lo && r[0] <= hi).reduce((s, r) => s + r[c], 0);
+  const r20 = (sumRange(24, 31) / sumRange(12, 19) - 1) * 100;
+  const rIn = (inb(24, 31, 3) / inb(12, 19, 3) - 1) * 100;
+  const rate = m2 => (a20.get(m2) / a20.get(m2 - 12) - 1) * 100;
+  const QB = BASE.search;
+  const tot = QB.total;
+  const touristIdx = S.cats.indexOf("관광지");
+  const interp = $("an-interp"); interp.replaceChildren();
+  li(interp, `20대 방문은 여름에 몰린다. 7·8월 평균은 약 ${compact(Math.round((avgOf(7) + avgOf(8)) / 2))}명이고 4월 평균은 약 ${compact(Math.round(avgOf(4)))}명이다. 방학·휴가 영향일 수 있으나 자료로 확인되지는 않는다.`);
+  li(interp, `2026년 1~8월 20대 방문객은 전년 같은 기간보다 ${signed(r20)}, 입도 관광객은 ${signed(rIn)}이다. 두 자료는 기준이 달라 직접 비교할 수 없지만, 20대가 전체 흐름과 다르게 움직일 가능성이 있다.`);
+  li(interp, `검색 수치의 ${pct(QB.catTotals[touristIdx] / tot * 100)}가 관광지 분류이고, 상위권은 ${QB.ids.slice(0, 4).map(n => S.names[n]).join(", ")}이다. 자연 명소에 관심이 모이는 경향으로 볼 수 있으나, 연령 구분이 없고 방문이나 선호를 뜻하지는 않는다.`);
+  const noAirport = BASE.places.ids.filter(g => P.names[groupName[g]] !== "제주국제공항").slice(0, 4).map(g => P.names[groupName[g]]);
+  li(interp, `도착건수는 공항을 빼면 ${noAirport.join(", ")} 순이다. 검색 상위와 도착 상위의 구성이 달라, 두 자료를 같은 뜻으로 읽으면 안 된다. 이 역시 전체 관광객·도민 기준이다.`);
+  const RB = computeReviews({ ...DEFAULTS, to: allMonths });
+  const pick = key => RB.groups.a.find(i => i.key === key);
+  const shareOf = (i, base) => pct(i / base * 100);
+  const months = Object.values(RV.months);
+  const youngBase = months.reduce((a, x) => a + x.poolYoung, 0), allBase = months.reduce((a, x) => a + x.pool, 0);
+  li(interp, `블로그 '20대' 언급 글(${fmt(youngBase)}건, 2024-01 ~ 2026-10)에는 혼자 여행(${shareOf(pick("solo").young, youngBase)})과 게스트하우스·파티·혼술바(${shareOf(pick("guest").young, youngBase)})가 전체 글(${shareOf(pick("solo").total, allBase)}, ${shareOf(pick("guest").total, allBase)})보다 많이 나온다. 혼자 온 여행자의 교류 수요를 보여 줄 수 있으나, 표본이 작고 작성자 연령을 확인하지 못했으며 검색어 영향도 있다.`);
+  const check = $("an-check"); check.replaceChildren();
+  for (const t of [
+    "온라인 후기: 블로그 제목·요약만 봤다. 본문, 유튜브, 지도 후기는 보지 못했고 작성자 연령도 확인할 수 없다. 만족·불편 항목은 '20대' 언급 글에서 건수가 적어 판단 근거로 약하다.",
+    "20대의 지역·장소·검색 특성: 지역·장소·검색 자료에 연령 열이 없어 확인할 수 없다.",
+    `방문객 수 집계 기준: 월별로 연령대 합은 입도 관광객의 ${ratioRange.age}배, 읍면동 합은 ${ratioRange.emd}배이다. 중복 집계와 도민 포함 여부를 제공처에 확인해야 한다.`,
+    "비짓제주 \"수치\"의 정의와, 같은 장소·같은 달에 최대 7행이 있는 이유: 파일에 설명이 없다.",
+    "인기 장소의 도착건수와 관광객 + 도민이 다른 행이 30,011행(3.7%) 있다. 차이의 원인은 알 수 없다.",
+    "자료 행 수 변화: 비짓제주는 2025년 8월부터 월 3만 행대로, 인기 장소는 2026년 1월부터 월 2.7만 행 안팎으로 늘었다. 수집 범위가 바뀌었는지 확인이 필요하다.",
+    "연령 10·70의 범위(10대 이하, 70대 이상 여부)도 확인이 필요하다.",
+  ]) li(check, t);
+  const act = $("an-action"); act.replaceChildren();
+  const fest = (() => { const c = S.cats.indexOf("축제/행사"), q2 = computeSearch({ ...DEFAULTS, scat: c }); return q2.ids.slice(0, 3).map(n => S.names[n]); })();
+  for (const t of [
+    `콘텐츠 일정: 7·8월을 중심으로 잡고, 전년 대비 감소가 큰 4·5월(2026년 ${signed(rate(27))}, ${signed(rate(28))})을 보완 시기로 시험한다.`,
+    `소재 후보: ${QB.ids.slice(0, 4).map(n => S.names[n]).join(", ")} 등 검색 상위 명소로 시범 콘텐츠를 만들고 20대 반응을 따로 측정한다.`,
+    `동선 후보: 도착 상위인 ${noAirport.slice(0, 3).join(", ")}을 묶은 코스를 검토한다. 20대 이용 여부는 별도 확인이 필요하다.`,
+    `행사 연계: 축제/행사 검색 상위(${fest.join(", ")})처럼 전시·팝업 소재의 반응을 시험한다. 연령 구분이 없어 20대 관심으로 단정하지 않는다.`,
+    "혼자 여행 소재: 게스트하우스·혼술바처럼 혼자 온 여행자가 어울리는 장소를 묶은 콘텐츠를 시험한다. 블로그 표본이 작아 반응을 따로 확인해야 한다.",
+    "선행 작업: '20대' 언급 글의 본문을 사람이 표본으로 읽어 주제를 확인하고, 연령 구분이 있는 장소·검색 자료를 확보한다.",
+  ]) li(act, t);
+}
+
+function renderSources() {
+  $("rv-excluded").textContent = fmt(RV.excludedPosts);
+  const rows = [
+    ["제주 연령대별 방문.xlsx", "20대 지표, 선그래프, 연령대 막대", "기준연월, 시도코드, 시도명, 성별, 연령, 방문객수", "2024-01 ~ 2026-08 (448행)", "명 / 월·성별·연령", "기간, 성별"],
+    ["월별 입도 관광객.xlsx", "입도 관광객 선그래프", "기준연월, 내국인·외국인·전체 입도 관광객수", "2024-01 ~ 2026-08 (32행)", "명 / 월", "기간, 방문객 구분"],
+    ["제주 지역별 방문객(읍면동).xlsx", "지도, 읍면동 막대", "기준연월, 읍면동코드, 시도명, 시군구명, 읍면동명, 내국인·외국인·총 방문객수, 주민센터 주소", "2024-01 ~ 2026-08 (1,376행)", "명 / 월·읍면동", "기간, 지역, 방문객 구분"],
+    ["제주 지역별 인기 장소.xlsx", "인기 장소 표", "주행일자(YYYYMM), 목적지명, 목적지주소, 읍면동코드, 읍면동명, 도착건수, 카테고리 3단계, 관광객·도민 도착 수", "2024-01 ~ 2026-09 (810,616행)", "건 / 월·목적지·카테고리", "기간, 지역, 도착 구분, 장소 카테고리"],
+    ["비짓제주 검색어 순위.xlsx", "가장 많이 검색된 장소, 워드클라우드, 키워드 표", "기준년월, 분류명, 지역명, 주소, 수치", "2024-01 ~ 2026-08 (915,341행)", "단위 미확인 / 월·장소, 구분 열 불명", "기간, 검색 분류, 지역(주소 기준)"],
+    ["naver_blog_posts.json (네이버 블로그 검색 API)", "온라인 후기", "작성일, 제목, 요약, 링크, 검색어 묶음", `${dateText(RV.firstDate)} ~ ${dateText(RV.lastDate)} (${fmt(RV.totalPosts)}건, 제주 여행 관련 ${fmt(RV.relevantPosts)}건)`, "건 / 글", "기간"],
+    ["월간 국가별 외국인 입도객.xlsx", "화면에 쓰지 않음 (요청 구성에 없음)", "기준연월, 관광구분별카테고리, 입도객수(명)", "2024-01 ~ 2026-08 (384행)", "명 / 월·국가", "-"],
+    ["입도 관광객 추이(일별).xlsx", "화면에 쓰지 않음 (월 합계가 월별 파일과 달라 월별 파일 사용)", "기준일자, 내국인·외국인·전체 방문객수", "2024-01-01 ~ 2026-10-21 (1,025행)", "명 / 일", "-"],
+  ];
+  const names = ["파일", "쓰는 곳", "열", "기간(데이터 행)", "단위 / 집계 단위", "적용 필터"];
+  $("table-sources").replaceChildren(tableOf(names.map((t, i) => ({ title: t, get: r => r[i] })), rows));
+}
+
+/* ---------- 필터 연결 ---------- */
+function fill(sel, opts) {
+  sel.replaceChildren(...opts.map(o => { const op = el("option", { value: o[0] }, o[1]); return op; }));
+}
+const monthOpts = []; for (let i = 0; i <= allMonths; i++) monthOpts.push([String(i), mLabel(i)]);
+fill($("f-from"), monthOpts); fill($("f-to"), monthOpts);
+const regionSel = $("f-region");
+regionSel.append(el("option", { value: "all" }, "제주 전체"), el("option", { value: "sgg:제주시" }, "제주시 전체"), el("option", { value: "sgg:서귀포시" }, "서귀포시 전체"));
+for (const s of ["제주시", "서귀포시"]) {
+  const g = el("optgroup", { label: s });
+  E.names.forEach((n, i) => { if (E.sgg[i] === s) g.append(el("option", { value: "emd:" + n }, n)); });
+  regionSel.append(g);
+}
+fill($("f-scat"), [["-1", "전체"], ...S.cats.map((c, i) => [String(i), c])]);
+fill($("f-pcat"), [["-1", "전체"], ...P.cats.map((c, i) => [i, c]).sort((a, b) => a[1] < b[1] ? -1 : 1).map(o => [String(o[0]), o[1]])]);
+const PRESETS = [["공통 기간", 0, COMMON_END], ["2024", 0, 11], ["2025", 12, 23], ["2026", 24, COMMON_END]];
+$("f-presets").append(...PRESETS.map(([t, a, b]) => el("button", { class: "btn", type: "button", "data-from": a, "data-to": b, onclick: () => { state.from = a; state.to = b; apply(); } }, t)));
+
+function syncControls() {
+  $("f-from").value = String(state.from); $("f-to").value = String(state.to);
+  $("f-region").value = state.region; $("f-sex").value = state.sex; $("f-visitor").value = state.visitor;
+  $("f-arrive").value = state.arrive; $("f-scat").value = String(state.scat); $("f-pcat").value = String(state.pcat);
+  for (const b of $("f-presets").children) b.setAttribute("aria-pressed", +b.dataset.from === state.from && +b.dataset.to === state.to ? "true" : "false");
+}
+function apply() { state.placePage = 0; state.wordPage = 0; syncControls(); render(); }
+function setRegion(r) { state.region = r; apply(); }
+$("f-from").addEventListener("change", e => { state.from = +e.target.value; if (state.from > state.to) state.to = state.from; apply(); });
+$("f-to").addEventListener("change", e => { state.to = +e.target.value; if (state.to < state.from) state.from = state.to; apply(); });
+$("f-region").addEventListener("change", e => setRegion(e.target.value));
+$("f-sex").addEventListener("change", e => { state.sex = e.target.value; apply(); });
+$("f-visitor").addEventListener("change", e => { state.visitor = e.target.value; apply(); });
+$("f-arrive").addEventListener("change", e => { state.arrive = e.target.value; apply(); });
+$("f-scat").addEventListener("change", e => { state.scat = +e.target.value; apply(); });
+$("f-pcat").addEventListener("change", e => { state.pcat = +e.target.value; apply(); });
+$("f-reset").addEventListener("click", () => { Object.assign(state, DEFAULTS, { placeQ: "", wordQ: "" }); $("place-q").value = ""; $("word-q").value = ""; apply(); });
+$("place-q").addEventListener("input", e => { state.placeQ = e.target.value; state.placePage = 0; renderPlaces(); });
+$("word-q").addEventListener("input", e => { state.wordQ = e.target.value; state.wordPage = 0; renderKeywords(); });
+let resizeTimer, lastW = innerWidth;
+addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (innerWidth !== lastW) { lastW = innerWidth; render(); } }, 150); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+
+renderSources();
+syncControls();
+render();
+window.__dash = { compute, state, get model() { return model; }, apply, D, S, P, E, groupName, groupEmd, mLabel };
+</script>
+</body>
+</html>
