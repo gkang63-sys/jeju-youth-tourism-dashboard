@@ -14,7 +14,7 @@
   --page: #f4f4f2; --surface: #ffffff; --ink: #000000; --ink2: rgba(0,0,0,.72); --muted: rgba(0,0,0,.54);
   --grid: #ededed; --axis: #d2d2d2; --border: rgba(0,0,0,.07); --wash: rgba(0,0,0,.04);
   --side: #0b0b0b; --up: #0b7a43; --up-bg: #e3f6ec; --down: #c4320a; --down-bg: #fde9e2;
-  --s1: #1e5eff; --s2: #f2541b; --s3: #0e9f5b; --mute-mark: #cfcfcf; --land: #f0f0f0;
+  --s1: #1e5eff; --s2: #f2541b; --s3: #0e9f5b; --s4: #5a5a5a; --mute-mark: #cfcfcf; --land: #f0f0f0;
   --q1: #d6e2ff; --q2: #a3bdff; --q3: #6b93ff; --q4: #1e5eff; --q5: #0a2f8f; --cloud: #1e5eff;
   --hero: #1e5eff; --hero-ink: #ffffff; --btn: #000000; --btn-ink: #ffffff;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
@@ -25,7 +25,7 @@
     --page: #0b0b0b; --surface: #141414; --ink: #ffffff; --ink2: rgba(255,255,255,.76); --muted: rgba(255,255,255,.56);
     --grid: #262626; --axis: #3a3a3a; --border: rgba(255,255,255,.10); --wash: rgba(255,255,255,.06);
     --side: #161616; --up: #4cd391; --up-bg: rgba(76,211,145,.14); --down: #ff8a66; --down-bg: rgba(255,138,102,.14);
-    --s1: #4d84ff; --s2: #ec5a22; --s3: #14a866; --mute-mark: #474747; --land: #262626;
+    --s1: #4d84ff; --s2: #ec5a22; --s3: #14a866; --s4: #b8b8b8; --mute-mark: #474747; --land: #262626;
     --q1: #0f2a6b; --q2: #1a46b3; --q3: #4d84ff; --q4: #93b4ff; --q5: #dce6ff; --cloud: #93b4ff;
     --hero: #1e5eff; --hero-ink: #ffffff; --btn: #ffffff; --btn-ink: #000000;
   }
@@ -241,7 +241,7 @@ h2 { scroll-margin-top: 200px; }
     <p class="question">청년층은 제주에서 어떤 여행을 하고 있을까?</p>
     <dl class="meta">
       <dt>분석 기간</dt><dd id="meta-period"></dd>
-      <dt>자료별 기간</dt><dd>20대 방문·입도 관광객·읍면동 방문·검색: 2024-01 ~ 2026-08 / 인기 장소: 2024-01 ~ 2026-09 / 온라인 후기: 2024-01 ~ 2026-10</dd>
+      <dt>자료별 기간</dt><dd id="meta-ranges"></dd>
       <dt>데이터 출처</dt><dd>제주 관광 빅데이터 플랫폼(비짓제주), 네이버 블로그 검색 API (온라인 후기)</dd>
       <dt>분석 대상</dt><dd>20대는 연령대별 방문 자료에만 있음. 지역·장소·검색어 자료는 연령 정보가 없어 전체 관광객 특성으로 봄.</dd>
     </dl>
@@ -455,9 +455,21 @@ const RV = window.REVIEWS;
 const allMonths = (() => { let mx = 0; for (let i = 0; i < P.mon.length; i++) if (P.mon[i] > mx) mx = P.mon[i]; for (const m in RV.months) if (+m > mx) mx = +m; return mx; })();
 const monthsWith = {
   age: new Set(D.age.map(r => r[0])), inbound: new Set(D.inbound.map(r => r[0])), emd: new Set(E.rows.map(r => r[0])),
-  search: new Set(S.mon), pop: new Set(P.mon),
+  search: new Set(S.mon), pop: new Set(P.mon), review: new Set(Object.keys(RV.months).map(Number)),
 };
 const COMMON_END = Math.max(...monthsWith.age);
+// 자료별 기간과 행 수는 코드에 쓰지 않고 자료에서 계산한다 (자료를 다시 만들어도 문구가 맞도록)
+const RANGE = Object.fromEntries(Object.entries(monthsWith).map(([k, s]) => [k, s.size ? `${mLabel(Math.min(...s))} ~ ${mLabel(Math.max(...s))}` : "자료 없음"]));
+const DATA_NAME = { age: "20대 방문", inbound: "입도 관광객", emd: "읍면동 방문", search: "검색", pop: "인기 장소", review: "온라인 후기" };
+const rowsPerMonth = (mon, cnt) => { const c = new Map(); for (let i = 0; i < mon.length; i++) c.set(mon[i], (c.get(mon[i]) || 0) + (cnt ? cnt[i] : 1)); return c; };
+// 월별 행 수가 크게 바뀐 달: 앞뒤 두 구간의 평균에서 벗어난 정도(제곱합)가 가장 작아지는 달
+function rowJump(c) {
+  const ms = [...c.keys()].sort((a, b) => a - b), v = ms.map(m => c.get(m));
+  const mean = a => a.reduce((x, y) => x + y, 0) / a.length, sse = a => { const mu = mean(a); return a.reduce((x, y) => x + (y - mu) ** 2, 0); };
+  let best = null;
+  for (let k = 3; k <= v.length - 3; k++) { const e = sse(v.slice(0, k)) + sse(v.slice(k)); if (!best || e < best.e) best = { e, month: ms[k], before: mean(v.slice(0, k)), after: mean(v.slice(k)) }; }
+  return best;
+}
 const DEFAULTS = { from: 0, to: COMMON_END, region: "all", sex: "all", visitor: "tot", arrive: "arr", scat: -1, pcat: -1, excl: false };
 // 「교통·주거·생활 시설 빼고 보기」에서 빼는 카테고리(카테고리 3단계 이름). 관광지로 보기 어려운 이동·주거·일상 시설만 골랐다.
 const EXCL_NAMES = [
@@ -670,11 +682,12 @@ function niceScale(v, n = 4) {
 function chartWidth(host, min = 300) { return Math.max(min, Math.round(host.clientWidth || host.parentElement.clientWidth || 600)); }
 
 /* 연도별 선그래프: 가로축 월, 세로축 값, 연도마다 선 하나 */
-const YEAR_COLOR = { 2024: "var(--s1)", 2025: "var(--s2)", 2026: "var(--s3)" };
+// 연도 색: 파랑·주황·초록·회색 순. 다섯째 해부터는 같은 색을 점선으로 다시 쓴다 (2027년 이후 자료가 들어와도 선이 비지 않게)
+const YEAR_COLORS = ["var(--s1)", "var(--s2)", "var(--s3)", "var(--s4)"];
 function yearSeries(pairs) { // pairs: [monthIndex, value]
   const by = {};
   for (const [m, v] of pairs) { const y = 2024 + Math.floor(m / 12); (by[y] = by[y] || new Array(12).fill(null))[m % 12] = v; }
-  return Object.keys(by).sort().map(y => ({ id: y, label: y + "년", color: YEAR_COLOR[y], values: by[y] }));
+  return Object.keys(by).sort().map(y => { const k = y - 2024; return { id: y, label: y + "년", color: YEAR_COLORS[k % YEAR_COLORS.length], dash: k >= YEAR_COLORS.length ? "6 4" : null, values: by[y] }; });
 }
 function lineChart(host, legendHost, pairs, opt) {
   host.replaceChildren(); legendHost.replaceChildren();
@@ -703,7 +716,7 @@ function lineChart(host, legendHost, pairs, opt) {
   for (const s of series) {
     let d = "", pen = false;
     s.values.forEach((v, i) => { if (v === null) { pen = false; return; } d += (pen ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1); pen = true; });
-    svg.append(sv("path", { d, fill: "none", stroke: s.color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+    svg.append(sv("path", { d, fill: "none", stroke: s.color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round", ...(s.dash ? { "stroke-dasharray": s.dash } : {}) }));
     let lastI = 11; while (s.values[lastI] === null) lastI--;
     svg.append(sv("circle", { cx: x(lastI), cy: y(s.values[lastI]), r: 4, fill: s.color, stroke: "var(--surface)", "stroke-width": 2 }));
   }
@@ -821,7 +834,7 @@ function quantileBreaks(values) {
 function renderMap(st, R) {
   const host = $("map"), scale = $("map-scale");
   host.replaceChildren(); scale.replaceChildren();
-  if (!R.hasData) host.append(emptyBox("선택한 기간에는 읍면동 방문 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-08)"));
+  if (!R.hasData) host.append(emptyBox(`선택한 기간에는 읍면동 방문 자료가 없습니다. (자료 기간: ${RANGE.emd})`));
   const scopeVals = E.names.map((_, i) => R.val[i]).filter((_, i) => R.inScope[i]);
   const br = quantileBreaks(scopeVals);
   const classOf = v => { let c = 0; while (c < 4 && v >= br[c]) c++; return c; };
@@ -919,7 +932,7 @@ function renderCloud(st, Q) {
   note.textContent = `글자가 클수록 수치 합이 큼. 상위 ${words.length}개 중 ${placed.length}개 표시` + (skipped ? ` (자리 부족으로 ${skipped}개 생략, 표에는 있음)` : "") + ".";
 }
 function emptySearchMsg(st) {
-  if (![...monthsWith.search].some(m => m >= st.from && m <= st.to)) return "선택한 기간에는 검색어 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-08)";
+  if (![...monthsWith.search].some(m => m >= st.from && m <= st.to)) return `선택한 기간에는 검색어 자료가 없습니다. (자료 기간: ${RANGE.search})`;
   return `주소에서 "${regionLabel(st.region)}"을(를) 찾을 수 있는 검색어가 없습니다. 비짓제주에는 읍면동 열이 없어, 동 지역은 집계되지 않을 수 있습니다.`;
 }
 
@@ -951,7 +964,7 @@ function render() {
 
   // 핵심 지표
   kpi($("kpi-visitors"), `20대 ${sx}제주 방문객 수 (선택 기간)`, A.months.length ? kv(fmt(A.total) + "명") : kna("선택 기간에 자료 없음"),
-    A.months.length ? `${mLabel(A.months[0])} ~ ${mLabel(A.months[A.months.length - 1])}, ${A.months.length}개월 합계. 지역·방문객 구분 필터 미적용(자료에 해당 열 없음)` : "20대 자료 기간: 2024-01 ~ 2026-08");
+    A.months.length ? `${mLabel(A.months[0])} ~ ${mLabel(A.months[A.months.length - 1])}, ${A.months.length}개월 합계. 지역·방문객 구분 필터 미적용(자료에 해당 열 없음)` : `20대 자료 기간: ${RANGE.age}`);
   if (A.months.length > 1) $("kpi-visitors").append(sparkline(A.months.map(m => A.series.get(m)), `${mLabel(A.months[0])}부터 ${mLabel(A.months[A.months.length - 1])}까지 20대 월별 방문객 수 추이선`));
   if (A.mom.state === "ok") kpi($("kpi-mom"), "전년 동월 대비 증감률", kd(A.mom.rate), `${mLabel(A.mom.month)} ${fmt(A.mom.cur)}명 / ${mLabel(A.mom.prevMonth)} ${fmt(A.mom.prev)}명`);
   else if (A.mom.state === "noprev") kpi($("kpi-mom"), "전년 동월 대비 증감률", kna("계산 불가"), `${mLabel(A.mom.month)}의 1년 전 자료가 없음 (2023년 자료 없음)`);
@@ -971,7 +984,7 @@ function render() {
   // 선그래프
   $("trend-title").textContent = `20대 ${sx}월별 방문객 수`;
   $("trend-scope").textContent = `적용: 기간, 성별 / 미적용: 지역·방문객 구분(자료에 해당 열 없음) / 단위: 명 / 연도별 선`;
-  lineChart($("chart-trend"), $("trend-legend"), A.months.map(m => [m, A.series.get(m)]), { height: chartWidth($("chart-trend")) < 480 ? 320 : 460, xTitle: "월", yTitle: "방문객 수(명)", emptyMsg: "선택한 기간에는 20대 방문 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-08)", aria: `20대 ${sx}월별 방문객 수 선그래프` });
+  lineChart($("chart-trend"), $("trend-legend"), A.months.map(m => [m, A.series.get(m)]), { height: chartWidth($("chart-trend")) < 480 ? 320 : 460, xTitle: "월", yTitle: "방문객 수(명)", emptyMsg: `선택한 기간에는 20대 방문 자료가 없습니다. (자료 기간: ${RANGE.age})`, aria: `20대 ${sx}월별 방문객 수 선그래프` });
   $("table-trend").replaceChildren(A.months.length ? tableOf([
     { title: "연월", get: m => mLabel(m) }, { title: "남성(M)", num: 1, get: m => fmt(A.sexRows[m].M) }, { title: "여성(W)", num: 1, get: m => fmt(A.sexRows[m].W) },
     { title: "합계", num: 1, get: m => fmt(A.sexRows[m].M + A.sexRows[m].W) },
@@ -988,7 +1001,7 @@ function render() {
   const vlabel = VISITOR_LABEL[st.visitor];
   $("inbound-title").textContent = `입도 관광객 월별 추이 (${vlabel})`;
   $("inbound-scope").textContent = "적용: 기간, 방문객 구분 / 미적용: 지역·성별(자료에 해당 열 없음) / 단위: 명 / 연도별 선";
-  lineChart($("chart-inbound"), $("inbound-legend"), I.rows.map(r => [r[0], r[I.col]]), { xTitle: "월", yTitle: "입도 관광객 수(명)", emptyMsg: "선택한 기간에는 입도 관광객 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-08)", aria: "입도 관광객 월별 선그래프" });
+  lineChart($("chart-inbound"), $("inbound-legend"), I.rows.map(r => [r[0], r[I.col]]), { xTitle: "월", yTitle: "입도 관광객 수(명)", emptyMsg: `선택한 기간에는 입도 관광객 자료가 없습니다. (자료 기간: ${RANGE.inbound})`, aria: "입도 관광객 월별 선그래프" });
   $("table-inbound").replaceChildren(I.rows.length ? tableOf([{ title: "연월", get: r => mLabel(r[0]) }, { title: "내국인", num: 1, get: r => fmt(r[1]) }, { title: "외국인", num: 1, get: r => fmt(r[2]) }, { title: "전체", num: 1, get: r => fmt(r[3]) }], [...I.rows].reverse()) : emptyBox("자료 없음"));
 
   renderPlaces();
@@ -1000,14 +1013,14 @@ function render() {
   $("region-title").textContent = `읍면동별 ${vlabel} 방문객 수`;
   $("region-scope").textContent = "적용: 기간, 지역, 방문객 구분 / 단위: 명 / 막대를 누르면 지역 필터가 바뀜";
   $("region-lede").replaceChildren();
-  if (R.hasData) $("region-lede").append(`${regionLabel(st.region)} 합계 `, el("b", {}, fmt(R.selected) + "명"), ` · 43개 읍면동 합계의 ${pct(R.all ? R.selected / R.all * 100 : 0)}`);
+  if (R.hasData) $("region-lede").append(`${regionLabel(st.region)} 합계 `, el("b", {}, fmt(R.selected) + "명"), ` · ${E.names.length}개 읍면동 합계의 ${pct(R.all ? R.selected / R.all * 100 : 0)}`);
   const legend = $("region-legend"); legend.replaceChildren();
   const SGG_COLOR = { "제주시": "var(--s1)", "서귀포시": "var(--s2)" };
   for (const s of Object.keys(SGG_COLOR)) { if (scopeSgg(st.region) && scopeSgg(st.region) !== s) continue; const k = el("span", { class: "key-box" }); k.style.background = SGG_COLOR[s]; legend.append(el("li", {}, k, s)); }
   const sel = st.region.startsWith("emd:") ? st.region.slice(4) : null;
   let shown = R.items.slice(0, 15);
   if (sel && !shown.some(o => o.name === sel)) shown = [...shown.slice(0, 14), R.items.find(o => o.name === sel)];
-  hbars($("chart-region"), R.hasData ? shown.map(o => ({ label: o.name, value: o.value, sub: o.sgg, color: SGG_COLOR[o.sgg], dim: sel && o.name !== sel, strong: o.name === sel, onClick: () => setRegion(st.region === "emd:" + o.name ? "all" : "emd:" + o.name) })) : [], { axisTitle: `${vlabel} 방문객 수(명), 상위 ${shown.length}개 / 범위 안 ${R.items.length}개`, unit: "명", labelWidth: 64, emptyMsg: "선택한 기간에는 읍면동 방문 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-08)", aria: "읍면동별 방문객 수 막대그래프" });
+  hbars($("chart-region"), R.hasData ? shown.map(o => ({ label: o.name, value: o.value, sub: o.sgg, color: SGG_COLOR[o.sgg], dim: sel && o.name !== sel, strong: o.name === sel, onClick: () => setRegion(st.region === "emd:" + o.name ? "all" : "emd:" + o.name) })) : [], { axisTitle: `${vlabel} 방문객 수(명), 상위 ${shown.length}개 / 범위 안 ${R.items.length}개`, unit: "명", labelWidth: 64, emptyMsg: `선택한 기간에는 읍면동 방문 자료가 없습니다. (자료 기간: ${RANGE.emd})`, aria: "읍면동별 방문객 수 막대그래프" });
   $("table-region").replaceChildren(R.hasData ? tableOf([
     { title: "순위", num: 1, get: o => R.items.indexOf(o) + 1 }, { title: "읍면동", get: o => o.name }, { title: "시군구", get: o => o.sgg },
     { title: "내국인", num: 1, active: st.visitor === "dom", get: o => fmt(o.dom) }, { title: "외국인", num: 1, active: st.visitor === "for", get: o => fmt(o.for) }, { title: "총 방문객", num: 1, active: st.visitor === "tot", get: o => fmt(o.tot) },
@@ -1070,7 +1083,21 @@ function renderStatus(st) {
   if (st.pcat >= 0) parts.push("장소 " + P.cats[st.pcat]);
   if (st.excl) parts.push("장소에서 교통·주거·생활 시설 뺌");
   box.replaceChildren(el("b", {}, "적용 중: "), parts.join(" · "));
-  if (st.to > COMMON_END) box.append(el("span", { class: "warn" }, `ⓘ ${mLabel(COMMON_END + 1)}은(는) 인기 장소와 온라인 후기에만, ${mLabel(COMMON_END + 2)}은(는) 온라인 후기에만 있습니다. 다른 자료는 ${mLabel(COMMON_END)}까지만 집계합니다.`));
+  if (st.to > COMMON_END) {
+    // 공통 기간 뒤의 달마다 어느 자료에 값이 있는지 자료에서 찾아 쓴다
+    const parts2 = [], lo = Math.max(st.from, COMMON_END + 1), short = new Map();
+    for (let m = lo; m <= st.to; m++) {
+      const has = Object.keys(DATA_NAME).filter(k => monthsWith[k].has(m)).map(k => DATA_NAME[k]);
+      parts2.push(`${mLabel(m)}은(는) ${has.length ? has.join("·") + "에만" : "어느 자료에도 없습니다"}`);
+    }
+    // 이 구간에 빈 달이 있는 자료를 마지막 달별로 묶어 밝힌다 (예: 인기 장소는 9월까지 있음)
+    for (const k of Object.keys(DATA_NAME)) {
+      const end = Math.max(...monthsWith[k]);
+      if (end < st.to) { if (!short.has(end)) short.set(end, []); short.get(end).push(DATA_NAME[k]); }
+    }
+    const shortText = [...short].sort((a, b) => a[0] - b[0]).map(([e, ns]) => `${ns.join("·")} ${mLabel(e)}`).join(", ");
+    box.append(el("span", { class: "warn" }, `ⓘ ${parts2.join(", ")}${parts2[parts2.length - 1].endsWith("없습니다") ? "." : " 있습니다."}` + (shortText ? ` 자료별 마지막 달: ${shortText}. 값이 없는 달은 0으로 치지 않고 집계에서 뺍니다.` : "")));
+  }
 }
 
 function renderPlaces() {
@@ -1087,7 +1114,7 @@ function renderPlaces() {
   $("place-total").textContent = `${regionLabel(st.region)} ${ARRIVE_LABEL[st.arrive]} 합 ${fmt(mTotal)}건`;
   const host = $("table-places"), pager = $("place-pager");
   if (!ids.length) {
-    host.replaceChildren(emptyBox(L.ids.length ? "검색어와 일치하는 목적지가 없습니다." : "선택한 조건에 맞는 인기 장소 자료가 없습니다. (자료 기간: 2024-01 ~ 2026-09)"));
+    host.replaceChildren(emptyBox(L.ids.length ? "검색어와 일치하는 목적지가 없습니다." : `선택한 조건에 맞는 인기 장소 자료가 없습니다. (자료 기간: ${RANGE.pop})`));
     pager.replaceChildren();
     return;
   }
@@ -1206,15 +1233,21 @@ function renderAnalysis(m, st) {
   const shareOf = (i, base) => pct(i / base * 100);
   const months = Object.entries(RV.months).filter(([k]) => +k >= DEFAULTS.from && +k <= DEFAULTS.to).map(e => e[1]);
   const youngBase = months.reduce((a, x) => a + x.poolYoung, 0), allBase = months.reduce((a, x) => a + x.pool, 0);
-  li(interp, `블로그 '20대' 언급 글(${fmt(youngBase)}건, ${mLabel(DEFAULTS.from)} ~ ${mLabel(DEFAULTS.to)})에는 혼자 여행(${shareOf(pick("solo").young, youngBase)})과 게스트하우스·파티·혼술바(${shareOf(pick("guest").young, youngBase)})가 전체 글(${shareOf(pick("solo").total, allBase)}, ${shareOf(pick("guest").total, allBase)})보다 많이 나온다. 혼자 온 여행자의 교류 수요를 보여 줄 수 있으나, 표본이 작고 작성자 연령을 확인하지 못했으며 검색어 영향도 있다.`);
+  // 블로그는 '20대'·'혼자 여행'을 넣은 검색어로도 모았으므로, 다른 글과 비교해 청년층 선호로 일반화하지 않는다
+  li(interp, `수집된 블로그 중 '20대' 언급 글(${fmt(youngBase)}건, ${mLabel(DEFAULTS.from)} ~ ${mLabel(DEFAULTS.to)})에서 혼자 여행은 ${fmt(pick("solo").young)}건(${shareOf(pick("solo").young, youngBase)}), 게스트하우스·파티·혼술바는 ${fmt(pick("guest").young)}건(${shareOf(pick("guest").young, youngBase)})으로 분류되었다. 비율의 분모는 불만 검색어로만 모은 글을 뺀 '20대' 언급 ${fmt(youngBase)}건이므로, 위 온라인 후기 칸의 기본 기간 전체 ${fmt(RB.total)}건과 분모가 다르다. 블로그는 '20대'·'혼자 여행' 같은 낱말을 넣은 검색어로도 모았기 때문에, 이 비율로 청년층 전체의 선호나 교류 수요를 추론할 수 없다. 근거 글을 읽고 추가로 조사할 주제를 찾는 데만 쓴다.`);
   const check = $("an-check"); check.replaceChildren();
+  // 아래 숫자도 자료에서 계산한다
+  let maxRows = 0; for (let i = 0; i < S.cnt.length; i++) if (S.cnt[i] > maxRows) maxRows = S.cnt[i];
+  let mism = 0; for (let i = 0; i < P.arr.length; i++) if (P.arr[i] !== P.tour[i] + P.res[i]) mism++;
+  const jumpText = (name, c) => { const j = rowJump(c); return j && j.after / j.before >= 1.1 ? `${name}는 ${mLabel(j.month)}부터 월 평균 ${compact(j.before)} 행에서 ${compact(j.after)} 행으로` : null; };
+  const jumps = [jumpText("비짓제주", rowsPerMonth(S.mon, S.cnt)), jumpText("인기 장소", rowsPerMonth(P.mon))].filter(Boolean);
   for (const t of [
     "온라인 후기: 블로그 제목·요약만 봤다. 본문, 유튜브, 지도 후기는 보지 못했고 작성자 연령도 확인할 수 없다. 만족·불편 항목은 '20대' 언급 글에서 건수가 적어 판단 근거로 약하다.",
     "20대의 지역·장소·검색 특성: 지역·장소·검색 자료에 연령 열이 없어 확인할 수 없다.",
     `방문객 수 집계 기준: 월별로 연령대 합은 입도 관광객의 ${ratioRange.age}배, 읍면동 합은 ${ratioRange.emd}배이다. 중복 집계와 도민 포함 여부를 제공처에 확인해야 한다.`,
-    "비짓제주 \"수치\"의 정의와, 같은 장소·같은 달에 최대 7행이 있는 이유: 파일에 설명이 없다.",
-    "인기 장소의 도착건수와 관광객 + 도민이 다른 행이 30,011행(3.7%) 있다. 차이의 원인은 알 수 없다.",
-    "자료 행 수 변화: 비짓제주는 2025년 8월부터 월 3만 행대로, 인기 장소는 2026년 1월부터 월 2.7만 행 안팎으로 늘었다. 수집 범위가 바뀌었는지 확인이 필요하다.",
+    `비짓제주 "수치"의 정의와, 같은 장소·같은 달에 최대 ${maxRows}행이 있는 이유: 파일에 설명이 없다.`,
+    `인기 장소의 도착건수와 관광객 + 도민이 다른 행이 ${fmt(mism)}행(${pct(mism / P.arr.length * 100)}) 있다. 차이의 원인은 알 수 없다.`,
+    ...(jumps.length ? [`자료 행 수 변화: ${jumps.join(", ")} 늘었다. 수집 범위가 바뀌었는지 확인이 필요하다.`] : []),
     "연령 10·70의 범위(10대 이하, 70대 이상 여부)도 확인이 필요하다.",
   ]) li(check, t);
   const act = $("an-action"); act.replaceChildren();
@@ -1224,12 +1257,16 @@ function renderAnalysis(m, st) {
     `소재 후보: ${QB.ids.slice(0, 4).map(n => S.names[n]).join(", ")} 등 검색 상위 명소로 시범 콘텐츠를 만들고 20대 반응을 따로 측정한다.`,
     `동선 후보: 도착 상위인 ${noAirport.slice(0, 3).join(", ")}을 묶은 코스를 검토한다. 20대 이용 여부는 별도 확인이 필요하다.`,
     `행사 연계: 축제/행사 검색 상위(${fest.join(", ")})처럼 전시·팝업 소재의 반응을 시험한다. 연령 구분이 없어 20대 관심으로 단정하지 않는다.`,
-    "혼자 여행 소재: 게스트하우스·혼술바처럼 혼자 온 여행자가 어울리는 장소를 묶은 콘텐츠를 시험한다. 블로그 표본이 작아 반응을 따로 확인해야 한다.",
+    "혼자 여행 소재: 게스트하우스·혼술바처럼 혼자 온 여행자가 어울리는 장소를 묶은 콘텐츠를 작게 시험한다. 블로그 근거는 표본이 작고 검색어 영향을 받아 청년층 수요의 근거가 아니므로, 반응을 따로 확인해야 한다.",
     "선행 작업: '20대' 언급 글의 본문을 사람이 표본으로 읽어 주제를 확인하고, 연령 구분이 있는 장소·검색 자료를 확보한다.",
   ]) li(act, t);
 }
 
 function renderSources() {
+  // 자료별 기간: 기간이 같은 자료끼리 묶어 쓴다
+  const byRange = new Map();
+  for (const k of Object.keys(DATA_NAME)) { if (!byRange.has(RANGE[k])) byRange.set(RANGE[k], []); byRange.get(RANGE[k]).push(DATA_NAME[k]); }
+  $("meta-ranges").textContent = [...byRange].map(([r, ns]) => `${ns.join("·")}: ${r}`).join(" / ");
   $("rv-excluded").textContent = fmt(RV.excludedPosts);
   $("last-month").textContent = mLabel(allMonths);
   const exclShown = EXCL_NAMES.filter(n => P.cats.includes(n));
@@ -1237,11 +1274,11 @@ function renderSources() {
   $("excl-list").textContent = exclShown.join(", ") + ". 항구·여객터미널은 섬 여행 출발지라 빼지 않았다.";
   $("count-note").textContent = `ⓘ 방문객 수는 제공처가 집계한 값이며 실제 인원과 다릅니다. 같은 사람이 여러 번 집계될 수 있습니다. 월별로 연령대 합은 입도 관광객의 ${ratioRange.age}배, 읍면동 합은 ${ratioRange.emd}배입니다. 그래서 규모는 같은 자료 안에서만 비교하고, 자료끼리 더하거나 나누지 않습니다.`;
   const rows = [
-    ["제주 연령대별 방문.xlsx", "20대 지표, 선그래프, 연령대 막대", "기준연월, 시도코드, 시도명, 성별, 연령, 방문객수", "2024-01 ~ 2026-08 (448행)", "명 / 월·성별·연령", "기간, 성별"],
-    ["월별 입도 관광객.xlsx", "입도 관광객 선그래프", "기준연월, 내국인·외국인·전체 입도 관광객수", "2024-01 ~ 2026-08 (32행)", "명 / 월", "기간, 방문객 구분"],
-    ["제주 지역별 방문객(읍면동).xlsx", "지도, 읍면동 막대", "기준연월, 읍면동코드, 시도명, 시군구명, 읍면동명, 내국인·외국인·총 방문객수, 주민센터 주소", "2024-01 ~ 2026-08 (1,376행)", "명 / 월·읍면동", "기간, 지역, 방문객 구분"],
-    ["제주 지역별 인기 장소.xlsx", "인기 장소 표", "주행일자(YYYYMM), 목적지명, 목적지주소, 읍면동코드, 읍면동명, 도착건수, 카테고리 3단계, 관광객·도민 도착 수", "2024-01 ~ 2026-09 (810,616행)", "건 / 월·목적지·카테고리", "기간, 지역, 도착 구분, 장소 카테고리"],
-    ["비짓제주 검색어 순위.xlsx", "가장 많이 검색된 장소, 워드클라우드, 키워드 표", "기준년월, 분류명, 지역명, 주소, 수치", "2024-01 ~ 2026-08 (915,341행)", "단위 미확인 / 월·장소, 구분 열 불명", "기간, 검색 분류, 지역(주소 기준)"],
+    ["제주 연령대별 방문.xlsx", "20대 지표, 선그래프, 연령대 막대", "기준연월, 시도코드, 시도명, 성별, 연령, 방문객수", `${RANGE.age} (${fmt(D.age.length)}행)`, "명 / 월·성별·연령", "기간, 성별"],
+    ["월별 입도 관광객.xlsx", "입도 관광객 선그래프", "기준연월, 내국인·외국인·전체 입도 관광객수", `${RANGE.inbound} (${fmt(D.inbound.length)}행)`, "명 / 월", "기간, 방문객 구분"],
+    ["제주 지역별 방문객(읍면동).xlsx", "지도, 읍면동 막대", "기준연월, 읍면동코드, 시도명, 시군구명, 읍면동명, 내국인·외국인·총 방문객수, 주민센터 주소", `${RANGE.emd} (${fmt(E.rows.length)}행)`, "명 / 월·읍면동", "기간, 지역, 방문객 구분"],
+    ["제주 지역별 인기 장소.xlsx", "인기 장소 표", "주행일자(YYYYMM), 목적지명, 목적지주소, 읍면동코드, 읍면동명, 도착건수, 카테고리 3단계, 관광객·도민 도착 수", `${RANGE.pop} (${fmt(P.rows)}행)`, "건 / 월·목적지·카테고리", "기간, 지역, 도착 구분, 장소 카테고리"],
+    ["비짓제주 검색어 순위.xlsx", "가장 많이 검색된 장소, 워드클라우드, 키워드 표", "기준년월, 분류명, 지역명, 주소, 수치", `${RANGE.search} (${fmt(S.rows)}행)`, "단위 미확인 / 월·장소, 구분 열 불명", "기간, 검색 분류, 지역(주소 기준)"],
     ["naver_blog_posts.json (네이버 블로그 검색 API)", "온라인 후기", "작성일, 제목, 요약, 링크, 검색어 묶음", `${dateText(RV.firstDate)} ~ ${dateText(RV.lastDate)} (${fmt(RV.totalPosts)}건, 제주 여행 관련 ${fmt(RV.relevantPosts)}건)`, "건 / 글", "기간"],
     ["월간 국가별 외국인 입도객.xlsx", "화면에 쓰지 않음 (요청 구성에 없음)", "기준연월, 관광구분별카테고리, 입도객수(명)", "2024-01 ~ 2026-08 (384행)", "명 / 월·국가", "-"],
     ["입도 관광객 추이(일별).xlsx", "화면에 쓰지 않음 (월 합계가 월별 파일과 달라 월별 파일 사용)", "기준일자, 내국인·외국인·전체 방문객수", "2024-01-01 ~ 2026-10-21 (1,025행)", "명 / 일", "-"],
@@ -1276,7 +1313,12 @@ function syncControls() {
   for (const b of $("f-presets").children) b.setAttribute("aria-pressed", +b.dataset.from === state.from && +b.dataset.to === state.to ? "true" : "false");
 }
 function apply() { state.placePage = 0; state.wordPage = 0; syncControls(); render(); }
-function setRegion(r) { state.region = r; apply(); }
+function setRegion(r) {
+  // 확대한 동 지역 밖(다른 시, 또는 같은 시의 읍·면)을 고르면 전체 지도로 돌아간다. 「제주 전체」는 확대 범위를 포함하므로 그대로 둔다.
+  if (mapZoom !== "all" && r !== "all" && (scopeSgg(r) !== mapZoom || (r.startsWith("emd:") && !r.endsWith("동")))) mapZoom = "all";
+  state.region = r;
+  apply();
+}
 $("f-from").addEventListener("change", e => { state.from = +e.target.value; if (state.from > state.to) state.to = state.from; apply(); });
 $("f-to").addEventListener("change", e => { state.to = +e.target.value; if (state.to < state.from) state.from = state.to; apply(); });
 $("f-region").addEventListener("change", e => setRegion(e.target.value));
@@ -1287,7 +1329,7 @@ $("f-scat").addEventListener("change", e => { state.scat = +e.target.value; appl
 $("f-pcat").addEventListener("change", e => { state.pcat = +e.target.value; apply(); });
 $("f-excl").addEventListener("change", e => { state.excl = e.target.checked; apply(); });
 for (const btn of $("map-zoom").children) btn.addEventListener("click", () => { mapZoom = btn.dataset.zoom; renderMap(state, model.region); });
-$("f-reset").addEventListener("click", () => { Object.assign(state, DEFAULTS, { placeQ: "", wordQ: "" }); $("place-q").value = ""; $("word-q").value = ""; apply(); });
+$("f-reset").addEventListener("click", () => { Object.assign(state, DEFAULTS, { placeQ: "", wordQ: "" }); mapZoom = "all"; hideTip(); $("place-q").value = ""; $("word-q").value = ""; apply(); });
 $("place-q").addEventListener("input", e => { state.placeQ = e.target.value; state.placePage = 0; renderPlaces(); });
 $("word-q").addEventListener("input", e => { state.wordQ = e.target.value; state.wordPage = 0; renderKeywords(); });
 let resizeTimer, lastW = innerWidth;
