@@ -378,7 +378,8 @@ with sync_playwright() as p:
             a20[r["A"]] += r["F"]
     rng = lambda a, b: sum(v for k, v in a20.items() if a <= k <= b)
     inb = lambda a, b: sum(r["D"] for r in INB if a <= r["A"] <= b)
-    interp, action, chk = page.inner_text("#an-interp"), page.inner_text("#an-action"), page.inner_text("#an-check")
+    # 긴 분석 문장은 접힌 「자세히 보기」 안에 있으므로 화면 표시 여부와 상관없이 글자를 읽는다
+    interp, action, chk = (page.text_content(s) for s in ("#an-interp", "#an-action", "#an-check"))
     check("해석: 20대 2026 1~8월", f"{abs((rng(202601, 202608) / rng(202501, 202508) - 1) * 100):.1f}%" in interp, True)
     check("해석: 입도 2026 1~8월", f"+{(inb(202601, 202608) / inb(202501, 202508) - 1) * 100:.1f}%" in interp, True)
     cat_sum = Counter()

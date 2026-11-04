@@ -13,23 +13,16 @@
   color-scheme: light;
   --page: #f4f4f2; --surface: #ffffff; --ink: #000000; --ink2: rgba(0,0,0,.72); --muted: rgba(0,0,0,.54);
   --grid: #ededed; --axis: #d2d2d2; --border: rgba(0,0,0,.07); --wash: rgba(0,0,0,.04);
-  --side: #0b0b0b; --up: #0b7a43; --up-bg: #e3f6ec; --down: #c4320a; --down-bg: #fde9e2;
+  --side: #eef1f6; --up: #0b7a43; --up-bg: #e3f6ec; --down: #c4320a; --down-bg: #fde9e2;
   --s1: #1e5eff; --s2: #f2541b; --s3: #0e9f5b; --s4: #5a5a5a; --mute-mark: #cfcfcf; --land: #f0f0f0;
   --q1: #d6e2ff; --q2: #a3bdff; --q3: #6b93ff; --q4: #1e5eff; --q5: #0a2f8f; --cloud: #1e5eff;
   --hero: #1e5eff; --hero-ink: #ffffff; --btn: #000000; --btn-ink: #ffffff;
+  /* 구역별 강조색 (글자에도 쓰므로 흰 바탕 대비 4.5:1 이상) */
+  --a-blue: #1e5eff; --a-orange: #c4410f; --a-green: #0b7a43; --a-violet: #5b3fd0; --a-pink: #b0256a; --a-teal: #0f7285; --a-gray: #5a5a5a;
+  --s2-text: #c4410f;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
 }
-@media (prefers-color-scheme: dark) {
-  :root:where(:not([data-theme="light"])) {
-    color-scheme: dark;
-    --page: #0b0b0b; --surface: #141414; --ink: #ffffff; --ink2: rgba(255,255,255,.76); --muted: rgba(255,255,255,.56);
-    --grid: #262626; --axis: #3a3a3a; --border: rgba(255,255,255,.10); --wash: rgba(255,255,255,.06);
-    --side: #161616; --up: #4cd391; --up-bg: rgba(76,211,145,.14); --down: #ff8a66; --down-bg: rgba(255,138,102,.14);
-    --s1: #4d84ff; --s2: #ec5a22; --s3: #14a866; --s4: #b8b8b8; --mute-mark: #474747; --land: #262626;
-    --q1: #0f2a6b; --q2: #1a46b3; --q3: #4d84ff; --q4: #93b4ff; --q5: #dce6ff; --cloud: #93b4ff;
-    --hero: #1e5eff; --hero-ink: #ffffff; --btn: #ffffff; --btn-ink: #000000;
-  }
-}
+/* 운영체제가 어두운 모드여도 늘 밝은 화면으로 보인다 (검정 바탕은 읽기 어렵다는 의견 반영) */
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
@@ -132,7 +125,7 @@ th.active, td.active { font-weight: 600; color: var(--ink); }
 .scale { display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 11px; color: var(--ink2); margin: 6px 0 0; padding: 0; list-style: none; font-variant-numeric: tabular-nums; }
 .scale li { display: inline-flex; align-items: center; gap: 4px; }
 
-.cloud text { cursor: default; fill: var(--cloud); font-weight: 600; }
+.cloud text { cursor: default; font-weight: 600; }
 .cloud text:hover { opacity: .7; }
 
 .review-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
@@ -161,16 +154,16 @@ th.active, td.active { font-weight: 600; color: var(--ink); }
 .toc { display: none; }
 @media (min-width: 1280px) {
   .shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); }
-  .toc { display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; background: var(--side); color: #fff; padding: 28px 14px 20px; }
+  .toc { display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; background: var(--side); color: var(--ink); padding: 28px 14px 20px; border-right: 1px solid var(--border); }
   .wrap { max-width: 1320px; width: 100%; }
 }
 .toc-title { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; margin: 0 8px 24px; }
 .toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-.toc a { display: flex; gap: 10px; align-items: baseline; padding: 8px 10px; border-radius: 999px; color: rgba(255,255,255,.72); text-decoration: none; font-size: 13px; transition: background .15s, color .15s; }
-.toc a:hover { background: rgba(255,255,255,.08); color: #fff; }
+.toc a { display: flex; gap: 10px; align-items: baseline; padding: 8px 10px; border-radius: 999px; color: var(--ink2); text-decoration: none; font-size: 13px; transition: background .15s, color .15s; }
+.toc a:hover { background: rgba(0,0,0,.05); color: var(--ink); }
 .toc a.active { background: var(--hero); color: #fff; }
 .toc-n { font-family: var(--mono); font-size: 11px; opacity: .7; }
-.toc-foot { margin: auto 8px 0; font-size: 11px; color: rgba(255,255,255,.5); }
+.toc-foot { margin: auto 8px 0; font-size: 11px; color: var(--muted); }
 h2 { scroll-margin-top: 200px; }
 /* 증감 배지: 화살표 + 숫자 + 색 (색만으로 뜻을 전하지 않음) */
 .delta { display: inline-flex; align-items: center; gap: 4px; padding: 2px 12px; border-radius: 999px; font-size: 26px; }
@@ -218,6 +211,51 @@ h2 { scroll-margin-top: 200px; }
   h2 { font-size: 24px; margin-top: 44px; }
   .field select { max-width: 100%; }
 }
+/* ---------- 색: 구역마다 강조색 하나 (번호·밑줄·카드 윗선·작은 라벨·강조 숫자) ---------- */
+#s-scale, #s-scale + .grid { --acc: var(--a-blue); }
+#s-trend, #s-trend + .grid { --acc: var(--a-orange); }
+#s-region, #s-region + .grid { --acc: var(--a-green); }
+#s-search, #s-search + .grid { --acc: var(--a-violet); }
+#s-review, #s-review + .card { --acc: var(--a-pink); }
+#s-analysis, #s-analysis + .an-wrap { --acc: var(--a-teal); }
+#s-source, #s-source + .card { --acc: var(--a-gray); }
+h2::before { color: var(--acc, var(--muted)); font-weight: 600; }
+h2::after { content: ""; display: block; width: 44px; height: 4px; border-radius: 2px; background: var(--acc, var(--ink)); margin-top: 12px; }
+.card { box-shadow: inset 0 3px 0 var(--acc, transparent), 0 1px 2px rgba(0,0,0,.03); }
+.card:hover { box-shadow: inset 0 3px 0 var(--acc, transparent), 0 6px 20px rgba(0,0,0,.06); }
+.hero { box-shadow: none; }
+.kpi-label, .tag { color: var(--acc, var(--muted)); }
+.hero .kpi-label { color: color-mix(in srgb, var(--hero-ink) 78%, transparent); }
+.lede b, .status b, .meta dt { color: var(--acc, var(--a-blue)); }
+.meta dt { --acc: var(--a-teal); }
+.h1-accent { color: var(--a-blue); }
+.h1-accent2 { color: var(--a-orange); }
+.rv-links a { text-decoration-color: var(--acc); }
+details summary::marker { color: var(--acc, var(--muted)); }
+/* 연한 색 바탕 카드: 카드마다 자기 강조색 */
+.tint { background: color-mix(in srgb, var(--acc) 8%, var(--surface)); border-color: color-mix(in srgb, var(--acc) 22%, transparent); }
+.tint .kpi-value.accent { color: var(--acc); }
+#kpi-search { --acc: var(--a-violet); } #kpi-mom { --acc: var(--a-orange); } #kpi-period { --acc: var(--a-green); } #kpi-share { --acc: var(--a-teal); }
+/* 왼쪽 메뉴와 알약 줄: 구역 색 점 */
+.toc li:nth-child(1) { --dot: var(--a-blue); } .toc li:nth-child(2) { --dot: var(--a-orange); } .toc li:nth-child(3) { --dot: var(--a-green); } .toc li:nth-child(4) { --dot: var(--a-violet); }
+.toc li:nth-child(5) { --dot: var(--a-pink); } .toc li:nth-child(6) { --dot: var(--a-teal); } .toc li:nth-child(7) { --dot: var(--a-gray); }
+.toc-n { color: var(--dot); opacity: 1; }
+.toc a.active .toc-n { color: #fff; }
+.chipnav a:nth-child(1) { --dot: var(--a-blue); } .chipnav a:nth-child(2) { --dot: var(--a-orange); } .chipnav a:nth-child(3) { --dot: var(--a-green); } .chipnav a:nth-child(4) { --dot: var(--a-violet); }
+.chipnav a:nth-child(5) { --dot: var(--a-pink); } .chipnav a:nth-child(6) { --dot: var(--a-teal); } .chipnav a:nth-child(7) { --dot: var(--a-gray); }
+.chipnav a::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--dot); margin-right: 6px; vertical-align: 1px; }
+/* 분석 결과 요약 */
+.sum-value { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; margin: 6px 0 4px; color: var(--acc); overflow-wrap: anywhere; }
+.sum-value .delta { font-size: 22px; }
+.short-list { margin: 8px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 20px; }
+.short-list li { display: flex; gap: 10px; align-items: baseline; font-size: 14px; }
+.short-list .k { flex: none; font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--surface); background: var(--acc); border-radius: 999px; padding: 2px 9px; }
+.an-more { margin-top: 16px; }
+.an-more > summary { font-size: 14px; font-weight: 600; color: var(--ink); }
+.an-more .analysis { margin-top: 12px; }
+#sum-1 { --acc: var(--a-orange); } #sum-2 { --acc: var(--a-blue); } #sum-3 { --acc: var(--a-violet); } #sum-4 { --acc: var(--a-green); }
+@media (min-width: 981px) and (max-width: 1199px) { .an-wrap .c3 { grid-column: span 6; } }
+@media (max-width: 980px) { .short-list { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -237,7 +275,7 @@ h2 { scroll-margin-top: 200px; }
 </nav>
 <div class="wrap">
   <header>
-    <h1>청년층 제주 관광 현황</h1>
+    <h1><span class="h1-accent">청년층</span> <span class="h1-accent2">제주</span> 관광 현황</h1>
     <p class="question">청년층은 제주에서 어떤 여행을 하고 있을까?</p>
     <dl class="meta">
       <dt>분석 기간</dt><dd id="meta-period"></dd>
@@ -268,10 +306,10 @@ h2 { scroll-margin-top: 200px; }
   <h2 id="s-scale">20대 방문 규모</h2>
   <div class="grid">
     <div class="card c6 hero" id="kpi-visitors"></div>
-    <div class="card c6" id="kpi-search"></div>
-    <div class="card c4" id="kpi-mom"></div>
-    <div class="card c4" id="kpi-period"></div>
-    <div class="card c4" id="kpi-share"></div>
+    <div class="card c6 tint" id="kpi-search"></div>
+    <div class="card c4 tint" id="kpi-mom"></div>
+    <div class="card c4 tint" id="kpi-period"></div>
+    <div class="card c4 tint" id="kpi-share"></div>
     <div class="card c12" style="padding:10px 16px"><p class="note" style="margin:0" id="count-note"></p></div>
   </div>
 
@@ -339,6 +377,7 @@ h2 { scroll-margin-top: 200px; }
     <div class="card c7 wide">
       <h3 id="cloud-title">검색어 워드클라우드</h3>
       <p class="scope" id="cloud-scope"></p>
+      <ul class="legend" id="cloud-legend"></ul>
       <div class="chart cloud" id="wordcloud"></div>
       <p class="note" id="cloud-note"></p>
     </div>
@@ -369,11 +408,24 @@ h2 { scroll-margin-top: 200px; }
   </div>
 
   <h2 id="s-analysis">분석 결과</h2>
-  <div class="analysis">
-    <div class="card"><h3>확인된 사실 <span class="tag">현재 필터 기준으로 갱신</span></h3><ul id="an-facts"></ul></div>
-    <div class="card"><h3>해석 <span class="tag" id="an-base"></span></h3><ul id="an-interp"></ul></div>
-    <div class="card"><h3>추가 확인 사항</h3><ul id="an-check"></ul></div>
-    <div class="card"><h3>실행 제안 <span class="tag">검증 전 가설</span></h3><ol id="an-action"></ol></div>
+  <div class="an-wrap">
+    <p class="scope" id="an-sum-scope"></p>
+    <div class="grid">
+      <div class="card c3 tint" id="sum-1"></div>
+      <div class="card c3 tint" id="sum-2"></div>
+      <div class="card c3 tint" id="sum-3"></div>
+      <div class="card c3 tint" id="sum-4"></div>
+      <div class="card c12"><h3>실행 제안 <span class="tag">검증 전 가설</span></h3><ul class="short-list" id="an-short"></ul></div>
+    </div>
+    <details class="more an-more">
+      <summary>자세히 보기: 확인된 사실 · 해석 · 추가 확인 사항 · 실행 제안 전문</summary>
+      <div class="analysis">
+        <div class="card"><h3>확인된 사실 <span class="tag">현재 필터 기준으로 갱신</span></h3><ul id="an-facts"></ul></div>
+        <div class="card"><h3>해석 <span class="tag" id="an-base"></span></h3><ul id="an-interp"></ul></div>
+        <div class="card"><h3>추가 확인 사항</h3><ul id="an-check"></ul></div>
+        <div class="card"><h3>실행 제안 <span class="tag">검증 전 가설</span></h3><ol id="an-action"></ol></div>
+      </div>
+    </details>
   </div>
 
   <h2 id="s-source">자료 기준</h2>
@@ -381,7 +433,7 @@ h2 { scroll-margin-top: 200px; }
     <div class="scroll" id="table-sources"></div>
     <p class="note"><b>관광 데이터 출처:</b> 위 표의 엑셀 7개 모두 제주 관광 빅데이터 플랫폼(비짓제주)입니다.</p>
     <p class="note"><b>지도:</b> 값은 읍면동 방문 파일의 내국인·외국인·총 방문객 수 합계입니다. 10자리 읍면동코드로 경계와 연결했고, 인기 장소 파일의 8자리 코드와 이름도 43개 모두 맞는지 만들 때 확인합니다. 장소·검색어는 좌표가 없어 지도에 찍지 않습니다.</p>
-    <p class="note"><b>워드클라우드:</b> 지역명별 수치 합 상위 60개이고, 수치 합이 클수록 글자가 큽니다(제곱근 눈금). 글자 위치와 색은 의미가 없습니다. 형태소 분석이나 표기 통합은 하지 않았습니다.</p>
+    <p class="note"><b>워드클라우드:</b> 지역명별 수치 합 상위 60개이고, 수치 합이 클수록 글자가 큽니다(제곱근 눈금). 글자 색은 주소로 찾은 시(제주시 파랑, 서귀포시 주황, 확인 불가 회색)이고, 위치는 의미가 없습니다. 분류(관광지 등)로 칠하지 않은 것은 상위 60개 대부분이 관광지라 색이 거의 하나가 되기 때문입니다. 형태소 분석이나 표기 통합은 하지 않았습니다.</p>
     <p class="note"><b>검색어 지역 필터:</b> 비짓제주에는 읍면동 열이 없어 주소 글자에서 찾습니다. 동 지역은 도로명 주소에 동 이름이 잘 나오지 않아 실제보다 적게 잡힙니다.</p>
     <p class="note"><b>온라인 후기:</b> 검색어 20개를 정확도순과 최신순으로 조회해 같은 링크를 하나로 합쳤습니다. 최신순 결과가 많아 최근 글에 치우치므로 월별 건수 변화는 추이가 아닙니다. 제목과 요약에 제주 여행 맥락이 없어 보이는 글 <span id="rv-excluded"></span>건은 집계에서 뺐습니다. 이 페이지에는 근거로 보여 주는 글만 제목·발췌·링크를 담고, 나머지는 월별 건수만 담았습니다.</p>
     <p class="note"><b>PDF와 달라진 점:</b> ① 증감률은 같은 달끼리 짝지어 계산합니다(PDF 43.5%는 비교 구간이 맞지 않음). ② 장소 순위는 도착건수 합입니다(PDF는 연월 숫자의 합). ③ 월별 선그래프는 연도별 선으로 그립니다(PDF는 월마다 선이 따로 있어 0으로 떨어짐). ④ 지도는 히트맵 대신 읍면동 경계를 색칠합니다. ⑤ 기간 필터는 자료가 있는 마지막 달인 <span id="last-month"></span>(온라인 후기)까지 고를 수 있습니다.</p>
@@ -913,9 +965,10 @@ function layoutCloud(words, W, H) {
 }
 function renderCloud(st, Q) {
   const host = $("wordcloud"), note = $("cloud-note");
-  host.replaceChildren();
+  host.replaceChildren(); $("cloud-legend").replaceChildren();
   if (!Q.ids.length) { host.append(emptyBox(emptySearchMsg(st))); note.textContent = ""; return; }
-  const words = Q.ids.slice(0, 60).map(n => ({ name: S.names[n], value: Q.sum[n], cat: Q.repCat(n) }));
+  // 색 = 주소 기준 시 (지역 차트와 같은 색). 한 낱말이 두 시에 걸치면 수치 합이 큰 쪽
+  const words = Q.ids.slice(0, 60).map(n => ({ name: S.names[n], value: Q.sum[n], cat: Q.repCat(n), city: cityOf(n, st) }));
   // 자리가 모자라 빠지는 낱말이 있으면 높이를 늘려 다시 배치한다 (최대 3번)
   const W = chartWidth(host);
   let H = W < 480 ? 420 : 400, res = layoutCloud(words, W, H);
@@ -923,13 +976,30 @@ function renderCloud(st, Q) {
   const { placed, skipped } = res;
   const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "검색어 워드클라우드. 같은 내용을 키워드 빈도 표에서 볼 수 있음" });
   for (const p of placed) {
-    const t = sv("text", { x: p.cx, y: p.cy + p.size * .35, "text-anchor": "middle", "font-size": p.size }, p.text);
-    t.addEventListener("pointermove", ev => showTip(ev.clientX, ev.clientY, p.word.name + " · " + p.word.cat, [{ value: fmt(p.word.value), label: "수치 합" }]));
+    const t = sv("text", { x: p.cx, y: p.cy + p.size * .35, "text-anchor": "middle", "font-size": p.size, style: `fill:${CITY_COLOR[p.word.city]}` }, p.text);
+    t.addEventListener("pointermove", ev => showTip(ev.clientX, ev.clientY, p.word.name + " · " + p.word.cat + " · " + CITY_LABEL[p.word.city], [{ value: fmt(p.word.value), label: "수치 합" }]));
     t.addEventListener("pointerleave", hideTip);
     svg.append(t);
   }
   host.append(svg);
-  note.textContent = `글자가 클수록 수치 합이 큼. 상위 ${words.length}개 중 ${placed.length}개 표시` + (skipped ? ` (자리 부족으로 ${skipped}개 생략, 표에는 있음)` : "") + ".";
+  const legend = $("cloud-legend"); legend.replaceChildren();
+  for (const c of [0, 1, 2]) {
+    const n = words.filter(w => w.city === c).length;
+    if (!n) continue;
+    const k = el("span", { class: "key-box" }); k.style.background = CITY_COLOR[c];
+    legend.append(el("li", {}, k, `${CITY_LABEL[c]} ${n}개`));
+  }
+  note.textContent = `글자가 클수록 수치 합이 큼. 색은 주소 기준 시. 상위 ${words.length}개 중 ${placed.length}개 표시` + (skipped ? ` (자리 부족으로 ${skipped}개 생략, 표에는 있음)` : "") + ".";
+}
+const CITY_COLOR = ["var(--s1)", "var(--s2-text)", "var(--a-gray)"], CITY_LABEL = ["제주시", "서귀포시", "주소로 시 확인 불가"];
+const searchKeysByName = (() => { const m = new Map(); for (let k = 0; k < nKeysS; k++) { const n = S.keyName[k]; if (!m.has(n)) m.set(n, []); m.get(n).push(k); } return m; })();
+function cityOf(n, st) {
+  const s = [0, 0, 0];
+  for (const k of searchKeysByName.get(n) || []) {
+    if (st.scat >= 0 && S.keyCat[k] !== st.scat) continue;
+    for (let j = S.off[k], e = S.off[k + 1]; j < e; j++) if (S.mon[j] >= st.from && S.mon[j] <= st.to) s[S.keySgg[k]] += S.sum[j];
+  }
+  return s.indexOf(Math.max(...s));
 }
 function emptySearchMsg(st) {
   if (![...monthsWith.search].some(m => m >= st.from && m <= st.to)) return `선택한 기간에는 검색어 자료가 없습니다. (자료 기간: ${RANGE.search})`;
@@ -941,6 +1011,7 @@ function kpi(host, label, valueNode, sub) {
   host.replaceChildren(el("p", { class: "kpi-label" }, label), valueNode, el("p", { class: "kpi-sub" }, sub));
 }
 const kv = t => el("p", { class: "kpi-value" }, t);
+const kva = t => el("p", { class: "kpi-value accent" }, t);
 const kna = t => el("p", { class: "kpi-value" }, el("span", { class: "kpi-na" }, "ⓘ " + t));
 const kd = r => el("p", { class: "kpi-value" }, el("span", { class: "delta" + (r > 0 ? " up" : r < 0 ? " down" : "") }, signed(r)));
 // 대표 지표 카드 안의 작은 추이선 (선택 기간의 월별 값)
@@ -972,13 +1043,13 @@ function render() {
   if (A.period.state === "ok") kpi($("kpi-period"), "전년 동기 대비 증감률", kd(A.period.rate), `1년 전 자료가 있는 ${A.period.months}개월만 짝지어 비교 (${mLabel(A.period.first)} ~ ${mLabel(A.period.last)})`);
   else if (A.period.state === "noprev") kpi($("kpi-period"), "전년 동기 대비 증감률", kna("계산 불가"), "선택 기간 모든 달의 1년 전 자료가 없음");
   else kpi($("kpi-period"), "전년 동기 대비 증감률", kna("계산 불가"), "선택 기간에 20대 자료 없음");
-  if (A.share !== null) kpi($("kpi-share"), "20대 비중", kv(pct(A.share)), `${st.sex === "all" ? "전체" : sx.trim()} 연령 합계 중`);
+  if (A.share !== null) kpi($("kpi-share"), "20대 비중", kva(pct(A.share)), `${st.sex === "all" ? "전체" : sx.trim()} 연령 합계 중`);
   else kpi($("kpi-share"), "20대 비중", kna("계산 불가"), "자료 없음");
 
   const scatName = st.scat >= 0 ? S.cats[st.scat] : "장소";
   if (Q.ids.length) {
     const top = Q.ids[0];
-    kpi($("kpi-search"), `가장 많이 검색된 ${scatName}`, kv(S.names[top]), `수치 합 ${fmt(Q.sum[top])} · 분류 ${Q.repCat(top)} · 범위: ${regionLabel(st.region)}. 전체 이용자 기준이며, 실제 방문이나 선호를 뜻하지 않음.`);
+    kpi($("kpi-search"), `가장 많이 검색된 ${scatName}`, kva(S.names[top]), `수치 합 ${fmt(Q.sum[top])} · 분류 ${Q.repCat(top)} · 범위: ${regionLabel(st.region)}. 전체 이용자 기준이며, 실제 방문이나 선호를 뜻하지 않음.`);
   } else kpi($("kpi-search"), `가장 많이 검색된 ${scatName}`, kna("자료 없음"), emptySearchMsg(st));
 
   // 선그래프
@@ -1260,6 +1331,23 @@ function renderAnalysis(m, st) {
     "혼자 여행 소재: 게스트하우스·혼술바처럼 혼자 온 여행자가 어울리는 장소를 묶은 콘텐츠를 작게 시험한다. 블로그 근거는 표본이 작고 검색어 영향을 받아 청년층 수요의 근거가 아니므로, 반응을 따로 확인해야 한다.",
     "선행 작업: '20대' 언급 글의 본문을 사람이 표본으로 읽어 주제를 확인하고, 연령 구분이 있는 장소·검색 자료를 확보한다.",
   ]) li(act, t);
+
+  // 한눈에 보는 요약: 핵심 숫자 4개와 짧은 제안. 긴 문장은 아래 「자세히 보기」에 둔다
+  $("an-sum-scope").textContent = `기본 조건(${mLabel(0)} ~ ${mLabel(COMMON_END)}, 제주 전체) 기준 고정. 20대 구분은 방문 자료에만 있고, 검색·도착은 전체 관광객 자료다.`;
+  const peakAvg = (avgOf(peak2[0]) + avgOf(peak2[1])) / 2;
+  const tile = (id, label, value, sub) => $(id).replaceChildren(el("p", { class: "kpi-label" }, label), value, el("p", { class: "kpi-sub" }, sub));
+  const sv2 = t => el("p", { class: "sum-value" }, t);
+  tile("sum-1", "20대 방문이 몰리는 달", sv2(`${peak2.join("·")}월`), `월평균 약 ${compact(Math.round(peakAvg))}명 · 가장 적은 ${lowMo}월의 ${(peakAvg / avgOf(lowMo)).toFixed(1)}배`);
+  tile("sum-2", `${ytdLabel} 20대 방문`, el("p", { class: "sum-value" }, el("span", { class: "delta" + (r20 > 0 ? " up" : r20 < 0 ? " down" : "") }, signed(r20))), `전년 같은 기간 대비 · 입도 관광객은 ${signed(rIn)}`);
+  tile("sum-3", "검색 관심 1위", sv2(S.names[QB.ids[0]]), `검색 수치의 ${pct(QB.catTotals[touristIdx] / tot * 100)}가 관광지 · 방문을 뜻하지는 않음`);
+  tile("sum-4", "도착 1위 (공항 제외)", sv2(noAirport[0]), `다음은 ${noAirport.slice(1, 3).join(", ")} · 검색 상위와 구성이 다름`);
+  const short = $("an-short"); short.replaceChildren();
+  for (const [k, t] of [
+    ["시기", `${peak2.join("·")}월 중심` + (drop2.length ? `, 감소가 큰 ${drop2.map(m2 => m2 % 12 + 1).join("·")}월은 보완 시기로 시험` : "")],
+    ["소재", `검색 상위 명소(${QB.ids.slice(0, 2).map(n => S.names[n]).join(", ")}) 시범 콘텐츠`],
+    ["동선", `도착 상위 ${noAirport.slice(0, 3).join(" → ")} 코스 검토`],
+    ["먼저", "20대 구분이 있는 장소·검색 자료 확보"],
+  ]) short.append(el("li", {}, el("span", { class: "k" }, k), el("span", {}, t)));
 }
 
 function renderSources() {
@@ -1334,7 +1422,6 @@ $("place-q").addEventListener("input", e => { state.placeQ = e.target.value; sta
 $("word-q").addEventListener("input", e => { state.wordQ = e.target.value; state.wordPage = 0; renderKeywords(); });
 let resizeTimer, lastW = innerWidth;
 addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (innerWidth !== lastW) { lastW = innerWidth; render(); } }, 150); });
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
 
 renderSources();
 syncControls();
