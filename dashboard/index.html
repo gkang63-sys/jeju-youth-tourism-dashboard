@@ -256,22 +256,120 @@ details summary::marker { color: var(--acc, var(--muted)); }
 #sum-1 { --acc: var(--a-orange); } #sum-2 { --acc: var(--a-blue); } #sum-3 { --acc: var(--a-violet); } #sum-4 { --acc: var(--a-green); }
 @media (min-width: 981px) and (max-width: 1199px) { .an-wrap .c3 { grid-column: span 6; } }
 @media (max-width: 980px) { .short-list { grid-template-columns: 1fr; } }
+
+/* ===================== 디자인 2 (참고 시안 반영) =====================
+   둥근 큰 틀 안에 흰 왼쪽 메뉴와 연회색 본문, 그림자만 있는 흰 카드, 아이콘 원,
+   검정 알약(선택된 메뉴·주 버튼), 회색 알약 칩, 줄마다 연회색인 표.
+   색은 아이콘 원과 데이터(차트·지도·워드클라우드)에만 쓴다. */
+:root { --page: #e4e4e4; --frame: #f3f3f3; --chip: #efefef; --row: #f6f6f6; --side: #ffffff; --radius: 22px; }
+body { background: var(--page); }
+.shell { background: var(--frame); min-height: 100vh; }
+@media (min-width: 1280px) {
+  body { padding: 20px; }
+  .shell { border-radius: 32px; box-shadow: 0 24px 60px rgba(0,0,0,.08); min-height: calc(100vh - 40px); grid-template-columns: 250px minmax(0, 1fr); }
+  .toc { margin: 14px 0 14px 14px; top: 34px; height: calc(100vh - 68px); border-radius: 26px; background: var(--side); border: 0; padding: 26px 16px 18px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .wrap { padding: 30px 30px 56px; }
+}
+.ic svg { width: 18px; height: 18px; display: block; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* 왼쪽 메뉴 */
+.toc-title { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; margin: 0 6px 30px; color: var(--ink); }
+.toc-title .logo { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--ink); color: #fff; }
+.toc ol { gap: 6px; }
+.toc a { align-items: center; gap: 12px; padding: 6px 14px 6px 6px; color: var(--ink2); font-size: 13px; font-weight: 500; }
+.toc a:hover { background: var(--row); color: var(--ink); }
+.toc-n { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--chip); color: var(--dot); opacity: 1; }
+.toc a.active { background: var(--ink); color: #fff; box-shadow: 0 6px 14px rgba(0,0,0,.18); }
+.toc a.active .toc-n { background: #fff; color: var(--ink); }
+.toc-foot { margin: auto 0 0; display: flex; gap: 10px; align-items: center; padding: 12px; border-radius: 18px; background: var(--row); font-size: 11px; color: var(--muted); --dot: var(--ink2); }
+.toc-foot .toc-n { background: var(--surface); }
+.toc-foot b { display: block; font-size: 12px; color: var(--ink); font-weight: 600; }
+/* 머리말과 필터 */
+header { background: var(--surface); border-radius: var(--radius); padding: 24px 28px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.03em; }
+.question { font-size: 16px; margin: 6px 0 16px; }
+.filters { background: color-mix(in srgb, var(--surface) 94%, transparent); border: 0; border-radius: var(--radius); padding: 14px 18px; margin: 14px 0 6px; box-shadow: 0 6px 18px rgba(0,0,0,.05); }
+@media (min-width: 760px) { .filters { top: 10px; } }
+.field { font-family: inherit; font-size: 11px; font-weight: 500; }
+.field select { border-radius: 999px; padding: 6px 12px; border-color: #dcdcdc; }
+#f-reset { background: var(--btn); color: var(--btn-ink); border-color: var(--btn); }
+.tools input { border-radius: 999px; padding: 5px 14px; border-color: #dcdcdc; }
+/* 구역 제목: 아이콘 원 + 굵은 제목 (번호와 밑줄은 뺌) */
+h2 { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 34px 0 14px; }
+h2::before, h2::after { content: none; }
+.h-ic { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--surface); color: var(--acc); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+@media (max-width: 980px) { h2 { font-size: 20px; margin-top: 28px; } }
+/* 카드: 테두리 없이 흰 바탕과 옅은 그림자 */
+.card, .card:hover { border: 0; border-radius: var(--radius); }
+.card { padding: 20px 22px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+.card:hover { box-shadow: 0 10px 26px rgba(0,0,0,.07); }
+.card h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+.grid { gap: 14px; }
+/* 핵심 지표 타일: 아이콘 원, 큰 숫자, 짧은 이름 (가운데 맞춤) */
+.tiles { display: grid; grid-template-columns: minmax(0, 1.7fr) repeat(4, minmax(0, 1fr)); gap: 14px; }
+.tile { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 22px 14px 18px; }
+.t-ic { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 14px; background: color-mix(in srgb, var(--acc) 12%, var(--surface)); color: var(--acc); }
+.t-ic svg { width: 20px; height: 20px; }
+.tile .kpi-value { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 2px; color: var(--ink); }
+.tile .kpi-value.accent { color: var(--acc); }
+.tile .kpi-label { font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0; color: var(--ink2); }
+.tile .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+.tile .kpi-na { font-size: 14px; color: var(--ink2); }
+.tile .delta { font-size: 18px; padding: 2px 12px; }
+.hero, .hero:hover { background: var(--surface); color: var(--ink); }
+.hero { box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+.tile.hero .t-ic { background: var(--ink); color: #fff; }
+.tile.hero .kpi-value { font-size: 34px; letter-spacing: -0.03em; }
+.tile.hero .kpi-label { color: var(--ink2); }
+.tile.hero .kpi-sub { color: var(--muted); }
+.tile.hero .kpi-na { color: var(--ink2); }
+.hero .spark { color: var(--a-blue); margin-top: 12px; }
+#kpi-visitors { --acc: var(--ink); }
+@media (max-width: 1199px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tile.hero { grid-column: span 2; } }
+.note-card { padding: 12px 18px; }
+/* 칩: 회색 알약 */
+.tag, .rv-count { display: inline-block; background: var(--chip); color: var(--ink2); border-radius: 999px; padding: 1px 10px; font-size: 11px; font-weight: 500; }
+.card h3 .tag { vertical-align: 3px; margin-left: 4px; }
+/* 표: 줄마다 연회색 둥근 띠 */
+table { border-collapse: separate; border-spacing: 0 6px; }
+th { border-bottom: 0; color: var(--muted); font-weight: 500; padding: 4px 10px; }
+td { border-bottom: 0; background: var(--row); padding: 9px 10px; }
+td:first-child { border-radius: 12px 0 0 12px; }
+td:last-child { border-radius: 0 12px 12px 0; }
+tr.sel td { background: color-mix(in srgb, var(--acc, var(--a-blue)) 14%, var(--surface)); }
+.pager .btn { width: 34px; padding: 0; }
+/* 「표로 보기」 등 펼치기: 테두리 알약 */
+details.tbl > summary { display: inline-flex; align-items: center; gap: 6px; list-style: none; border: 1px solid #dcdcdc; border-radius: 999px; padding: 4px 14px; font-size: 12px; background: var(--surface); }
+details.tbl > summary::-webkit-details-marker { display: none; }
+details.tbl > summary::after { content: "▾"; font-size: 10px; }
+details.tbl[open] > summary::after { content: "▴"; }
+.empty, .callout { border-radius: 14px; }
+/* 온라인 후기: 세 칸을 연회색 판으로 */
+.review-grid > div { background: var(--row); border-radius: 18px; padding: 14px 16px; }
+.rv-item { border-top-color: #e4e4e4; }
+.review-grid .rv-count { background: var(--surface); }
+/* 분석 결과 요약 타일 */
+.sum .kpi-label { font-family: inherit; font-size: 12px; font-weight: 500; color: var(--ink2); }
+.short-list .k { background: var(--ink); color: #fff; }
+.chipnav a { background: var(--surface); border-color: transparent; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+.chipnav a.active { background: var(--ink); color: #fff; }
+@media (max-width: 1279px) { body { padding: 0; } }
+@media (max-width: 980px) { header { padding: 18px; } h1 { font-size: 28px; } }
 </style>
 </head>
 <body>
 <div class="shell">
 <nav class="toc" aria-label="구역 바로가기">
-  <p class="toc-title">청년층 제주 관광</p>
+  <p class="toc-title"><span class="logo ic" data-icon="logo"></span>청년층 제주</p>
   <ol>
-    <li><a href="#s-scale"><span class="toc-n">01</span>20대 방문 규모</a></li>
-    <li><a href="#s-trend"><span class="toc-n">02</span>방문 추이와 인기 장소</a></li>
-    <li><a href="#s-region"><span class="toc-n">03</span>지역별 방문</a></li>
-    <li><a href="#s-search"><span class="toc-n">04</span>관광 검색어</a></li>
-    <li><a href="#s-review"><span class="toc-n">05</span>온라인 후기</a></li>
-    <li><a href="#s-analysis"><span class="toc-n">06</span>분석 결과</a></li>
-    <li><a href="#s-source"><span class="toc-n">07</span>자료 기준</a></li>
+    <li><a href="#s-scale"><span class="toc-n ic" data-icon="users"></span>20대 방문 규모</a></li>
+    <li><a href="#s-trend"><span class="toc-n ic" data-icon="trend"></span>방문 추이와 인기 장소</a></li>
+    <li><a href="#s-region"><span class="toc-n ic" data-icon="pin"></span>지역별 방문</a></li>
+    <li><a href="#s-search"><span class="toc-n ic" data-icon="search"></span>관광 검색어</a></li>
+    <li><a href="#s-review"><span class="toc-n ic" data-icon="chat"></span>온라인 후기</a></li>
+    <li><a href="#s-analysis"><span class="toc-n ic" data-icon="bulb"></span>분석 결과</a></li>
+    <li><a href="#s-source"><span class="toc-n ic" data-icon="db"></span>자료 기준</a></li>
   </ol>
-  <p class="toc-foot">자료: 비짓제주 · 네이버 블로그</p>
+  <div class="toc-foot"><span class="toc-n ic" data-icon="db"></span><span><b>자료 출처</b>비짓제주 · 네이버 블로그</span></div>
 </nav>
 <div class="wrap">
   <header>
@@ -303,17 +401,19 @@ details summary::marker { color: var(--acc, var(--muted)); }
     <nav class="chipnav" id="chipnav" aria-label="구역 바로가기"></nav>
   </section>
 
-  <h2 id="s-scale">20대 방문 규모</h2>
+  <h2 id="s-scale"><span class="h-ic ic" data-icon="users"></span>20대 방문 규모</h2>
   <div class="grid">
-    <div class="card c6 hero" id="kpi-visitors"></div>
-    <div class="card c6 tint" id="kpi-search"></div>
-    <div class="card c4 tint" id="kpi-mom"></div>
-    <div class="card c4 tint" id="kpi-period"></div>
-    <div class="card c4 tint" id="kpi-share"></div>
-    <div class="card c12" style="padding:10px 16px"><p class="note" style="margin:0" id="count-note"></p></div>
+    <div class="tiles c12">
+      <div class="card tile hero" id="kpi-visitors"></div>
+      <div class="card tile" id="kpi-search"></div>
+      <div class="card tile" id="kpi-mom"></div>
+      <div class="card tile" id="kpi-period"></div>
+      <div class="card tile" id="kpi-share"></div>
+    </div>
+    <div class="card c12 note-card"><p class="note" style="margin:0" id="count-note"></p></div>
   </div>
 
-  <h2 id="s-trend">방문 추이와 인기 장소</h2>
+  <h2 id="s-trend"><span class="h-ic ic" data-icon="trend"></span>방문 추이와 인기 장소</h2>
   <div class="grid">
     <div class="card c6 wide">
       <h3 id="trend-title">20대 월별 방문객 수</h3>
@@ -348,7 +448,7 @@ details summary::marker { color: var(--acc, var(--muted)); }
     </div>
   </div>
 
-  <h2 id="s-region">지역별 방문</h2>
+  <h2 id="s-region"><span class="h-ic ic" data-icon="pin"></span>지역별 방문</h2>
   <div class="grid">
     <div class="card c7">
       <h3 id="map-title">읍면동별 방문객 수 지도</h3>
@@ -372,7 +472,7 @@ details summary::marker { color: var(--acc, var(--muted)); }
     </div>
   </div>
 
-  <h2 id="s-search">관광 검색어</h2>
+  <h2 id="s-search"><span class="h-ic ic" data-icon="search"></span>관광 검색어</h2>
   <div class="grid">
     <div class="card c7 wide">
       <h3 id="cloud-title">검색어 워드클라우드</h3>
@@ -393,7 +493,7 @@ details summary::marker { color: var(--acc, var(--muted)); }
     </div>
   </div>
 
-  <h2 id="s-review">온라인 후기</h2>
+  <h2 id="s-review"><span class="h-ic ic" data-icon="chat"></span>온라인 후기</h2>
   <div class="card" id="reviews">
     <p class="scope" id="review-scope"></p>
     <p class="lede" id="review-lede"></p>
@@ -407,14 +507,14 @@ details summary::marker { color: var(--acc, var(--muted)); }
     <p class="note" id="review-source" style="font-weight:600"></p>
   </div>
 
-  <h2 id="s-analysis">분석 결과</h2>
+  <h2 id="s-analysis"><span class="h-ic ic" data-icon="bulb"></span>분석 결과</h2>
   <div class="an-wrap">
     <p class="scope" id="an-sum-scope"></p>
     <div class="grid">
-      <div class="card c3 tint" id="sum-1"></div>
-      <div class="card c3 tint" id="sum-2"></div>
-      <div class="card c3 tint" id="sum-3"></div>
-      <div class="card c3 tint" id="sum-4"></div>
+      <div class="card c3 sum" id="sum-1"></div>
+      <div class="card c3 sum" id="sum-2"></div>
+      <div class="card c3 sum" id="sum-3"></div>
+      <div class="card c3 sum" id="sum-4"></div>
       <div class="card c12"><h3>실행 제안 <span class="tag">검증 전 가설</span></h3><ul class="short-list" id="an-short"></ul></div>
     </div>
     <details class="more an-more">
@@ -428,7 +528,7 @@ details summary::marker { color: var(--acc, var(--muted)); }
     </details>
   </div>
 
-  <h2 id="s-source">자료 기준</h2>
+  <h2 id="s-source"><span class="h-ic ic" data-icon="db"></span>자료 기준</h2>
   <div class="card">
     <div class="scroll" id="table-sources"></div>
     <p class="note"><b>관광 데이터 출처:</b> 위 표의 엑셀 7개 모두 제주 관광 빅데이터 플랫폼(비짓제주)입니다.</p>
@@ -1007,8 +1107,10 @@ function emptySearchMsg(st) {
 }
 
 /* ---------- 화면 그리기 ---------- */
+// 핵심 지표 타일: 아이콘 원 → 큰 값 → 이름 → 짧은 설명
+const TILE_ICON = { "kpi-visitors": "users", "kpi-search": "search", "kpi-mom": "arrow", "kpi-period": "calendar", "kpi-share": "pie" };
 function kpi(host, label, valueNode, sub) {
-  host.replaceChildren(el("p", { class: "kpi-label" }, label), valueNode, el("p", { class: "kpi-sub" }, sub));
+  host.replaceChildren(icon(TILE_ICON[host.id], "t-ic"), valueNode, el("p", { class: "kpi-label" }, label), el("p", { class: "kpi-sub" }, sub));
 }
 const kv = t => el("p", { class: "kpi-value" }, t);
 const kva = t => el("p", { class: "kpi-value accent" }, t);
@@ -1034,22 +1136,22 @@ function render() {
   renderStatus(st);
 
   // 핵심 지표
-  kpi($("kpi-visitors"), `20대 ${sx}제주 방문객 수 (선택 기간)`, A.months.length ? kv(fmt(A.total) + "명") : kna("선택 기간에 자료 없음"),
-    A.months.length ? `${mLabel(A.months[0])} ~ ${mLabel(A.months[A.months.length - 1])}, ${A.months.length}개월 합계. 지역·방문객 구분 필터 미적용(자료에 해당 열 없음)` : `20대 자료 기간: ${RANGE.age}`);
+  kpi($("kpi-visitors"), `20대 ${sx}제주 방문객 수`, A.months.length ? kv(fmt(A.total) + "명") : kna("선택 기간에 자료 없음"),
+    A.months.length ? `${mLabel(A.months[0])} ~ ${mLabel(A.months[A.months.length - 1])} · ${A.months.length}개월 합계` : `20대 자료 기간: ${RANGE.age}`);
   if (A.months.length > 1) $("kpi-visitors").append(sparkline(A.months.map(m => A.series.get(m)), `${mLabel(A.months[0])}부터 ${mLabel(A.months[A.months.length - 1])}까지 20대 월별 방문객 수 추이선`));
-  if (A.mom.state === "ok") kpi($("kpi-mom"), "전년 동월 대비 증감률", kd(A.mom.rate), `${mLabel(A.mom.month)} ${fmt(A.mom.cur)}명 / ${mLabel(A.mom.prevMonth)} ${fmt(A.mom.prev)}명`);
-  else if (A.mom.state === "noprev") kpi($("kpi-mom"), "전년 동월 대비 증감률", kna("계산 불가"), `${mLabel(A.mom.month)}의 1년 전 자료가 없음 (2023년 자료 없음)`);
-  else kpi($("kpi-mom"), "전년 동월 대비 증감률", kna("계산 불가"), "선택 기간에 20대 자료 없음");
-  if (A.period.state === "ok") kpi($("kpi-period"), "전년 동기 대비 증감률", kd(A.period.rate), `1년 전 자료가 있는 ${A.period.months}개월만 짝지어 비교 (${mLabel(A.period.first)} ~ ${mLabel(A.period.last)})`);
-  else if (A.period.state === "noprev") kpi($("kpi-period"), "전년 동기 대비 증감률", kna("계산 불가"), "선택 기간 모든 달의 1년 전 자료가 없음");
-  else kpi($("kpi-period"), "전년 동기 대비 증감률", kna("계산 불가"), "선택 기간에 20대 자료 없음");
+  if (A.mom.state === "ok") kpi($("kpi-mom"), "전년 동월 대비", kd(A.mom.rate), `${mLabel(A.mom.month)} ${compact(A.mom.cur)}명 · ${mLabel(A.mom.prevMonth)} ${compact(A.mom.prev)}명`);
+  else if (A.mom.state === "noprev") kpi($("kpi-mom"), "전년 동월 대비", kna("계산 불가"), `${mLabel(A.mom.month)}의 1년 전 자료 없음`);
+  else kpi($("kpi-mom"), "전년 동월 대비", kna("계산 불가"), "선택 기간에 20대 자료 없음");
+  if (A.period.state === "ok") kpi($("kpi-period"), "전년 동기 대비", kd(A.period.rate), `1년 전 자료가 있는 ${A.period.months}개월 비교`);
+  else if (A.period.state === "noprev") kpi($("kpi-period"), "전년 동기 대비", kna("계산 불가"), "모든 달의 1년 전 자료 없음");
+  else kpi($("kpi-period"), "전년 동기 대비", kna("계산 불가"), "선택 기간에 20대 자료 없음");
   if (A.share !== null) kpi($("kpi-share"), "20대 비중", kva(pct(A.share)), `${st.sex === "all" ? "전체" : sx.trim()} 연령 합계 중`);
   else kpi($("kpi-share"), "20대 비중", kna("계산 불가"), "자료 없음");
 
   const scatName = st.scat >= 0 ? S.cats[st.scat] : "장소";
   if (Q.ids.length) {
     const top = Q.ids[0];
-    kpi($("kpi-search"), `가장 많이 검색된 ${scatName}`, kva(S.names[top]), `수치 합 ${fmt(Q.sum[top])} · 분류 ${Q.repCat(top)} · 범위: ${regionLabel(st.region)}. 전체 이용자 기준이며, 실제 방문이나 선호를 뜻하지 않음.`);
+    kpi($("kpi-search"), `가장 많이 검색된 ${scatName}`, kva(S.names[top]), `수치 합 ${fmt(Q.sum[top])} · ${Q.repCat(top)} · ${regionLabel(st.region)}`);
   } else kpi($("kpi-search"), `가장 많이 검색된 ${scatName}`, kna("자료 없음"), emptySearchMsg(st));
 
   // 선그래프
@@ -1360,7 +1462,7 @@ function renderSources() {
   const exclShown = EXCL_NAMES.filter(n => P.cats.includes(n));
   $("excl-count").textContent = exclShown.length;
   $("excl-list").textContent = exclShown.join(", ") + ". 항구·여객터미널은 섬 여행 출발지라 빼지 않았다.";
-  $("count-note").textContent = `ⓘ 방문객 수는 제공처가 집계한 값이며 실제 인원과 다릅니다. 같은 사람이 여러 번 집계될 수 있습니다. 월별로 연령대 합은 입도 관광객의 ${ratioRange.age}배, 읍면동 합은 ${ratioRange.emd}배입니다. 그래서 규모는 같은 자료 안에서만 비교하고, 자료끼리 더하거나 나누지 않습니다.`;
+  $("count-note").textContent = `ⓘ 20대 지표(방문객 수·증감·비중)에는 지역·방문객 구분 필터가 적용되지 않습니다(자료에 해당 열 없음). 검색 1위는 전체 이용자 기준이며 실제 방문이나 선호를 뜻하지 않습니다. 방문객 수는 제공처가 집계한 값이며 실제 인원과 다릅니다. 같은 사람이 여러 번 집계될 수 있습니다. 월별로 연령대 합은 입도 관광객의 ${ratioRange.age}배, 읍면동 합은 ${ratioRange.emd}배입니다. 그래서 규모는 같은 자료 안에서만 비교하고, 자료끼리 더하거나 나누지 않습니다.`;
   const rows = [
     ["제주 연령대별 방문.xlsx", "20대 지표, 선그래프, 연령대 막대", "기준연월, 시도코드, 시도명, 성별, 연령, 방문객수", `${RANGE.age} (${fmt(D.age.length)}행)`, "명 / 월·성별·연령", "기간, 성별"],
     ["월별 입도 관광객.xlsx", "입도 관광객 선그래프", "기준연월, 내국인·외국인·전체 입도 관광객수", `${RANGE.inbound} (${fmt(D.inbound.length)}행)`, "명 / 월", "기간, 방문객 구분"],
@@ -1422,6 +1524,27 @@ $("place-q").addEventListener("input", e => { state.placeQ = e.target.value; sta
 $("word-q").addEventListener("input", e => { state.wordQ = e.target.value; state.wordPage = 0; renderKeywords(); });
 let resizeTimer, lastW = innerWidth;
 addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (innerWidth !== lastW) { lastW = innerWidth; render(); } }, 150); });
+
+// 선 아이콘 (24칸 기준). 왼쪽 메뉴·구역 제목·지표 타일에 쓴다
+const ICONS = {
+  logo: '<path d="M3 16c2 0 2-1.6 4.5-1.6S10 16 12 16s2-1.6 4.5-1.6S19 16 21 16"/><path d="M3 20c2 0 2-1.6 4.5-1.6S10 20 12 20s2-1.6 4.5-1.6S19 20 21 20"/><path d="M6 12l5-7 3 4 2-2 3 5"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M21 20c0-2.6-1.6-4.8-4-5.6"/>',
+  trend: '<path d="M4 4v16h16"/><path d="M7.5 15l3.5-4 3 3 5-6"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  search: '<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/>',
+  chat: '<path d="M4 5.5h16v10.5H10l-6 4z"/><path d="M8 10h8M8 13h5"/>',
+  bulb: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/>',
+  db: '<ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v13c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-13"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/>',
+  arrow: '<path d="M4 17l6-6 4 4 6-7"/><path d="M15 8h5v5"/>',
+  calendar: '<rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+  pie: '<path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
+};
+function icon(name, cls) {
+  const box = el("span", { class: (cls || "") + " ic", "aria-hidden": "true" });
+  box.innerHTML = `<svg viewBox="0 0 24 24">${ICONS[name] || ""}</svg>`;
+  return box;
+}
+for (const n of document.querySelectorAll("[data-icon]")) { n.setAttribute("aria-hidden", "true"); n.innerHTML = `<svg viewBox="0 0 24 24">${ICONS[n.dataset.icon] || ""}</svg>`; }
 
 renderSources();
 syncControls();
