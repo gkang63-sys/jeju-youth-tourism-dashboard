@@ -10,7 +10,9 @@
 
 ## 배포 상태
 
-지금은 비공개 저장소로 관리하며 GitHub Pages로 배포하지 않습니다. `dashboard/data.js`에 관광 데이터가 들어 있어, 공개 조건을 확인한 뒤에 배포합니다.
+2026-11-04에 저장소를 공개로 바꿨습니다. 저장소에 올라간 `dashboard/data.js`(관광 데이터)와 `dashboard/reviews.js`(블로그 후기 분류 결과)는 누구나 볼 수 있습니다.
+
+GitHub Pages로는 아직 배포하지 않습니다. 배포 설정 파일 `.github/workflows/deploy-pages.yml`은 로컬에만 있고 저장소에는 올리지 않았습니다. 배포할 때는 이 파일을 올리고, 저장소 Settings → Pages의 Source를 GitHub Actions로 정한 뒤, Actions 탭에서 Run workflow로 직접 실행합니다.
 
 ## 데이터 다시 만들기
 
