@@ -182,12 +182,17 @@ h2 { scroll-margin-top: 200px; }
 .chipnav a { flex: none; font-size: 12px; color: var(--ink2); text-decoration: none; border: 1px solid var(--axis); border-radius: 999px; padding: 4px 12px; background: var(--surface); }
 .chipnav a.active { background: var(--btn); color: var(--btn-ink); border-color: var(--btn); }
 @media (min-width: 1280px) { .chipnav { display: none; } }
-/* 휴대폰: 필터를 접어 두고 버튼으로 연다. 필터 막대는 위에 붙어 따라온다 */
-#f-toggle { display: none; }
+/* 필터 접기: 접으면 「필터 펼치기」 단추와 적용 중인 조건 한 줄만 남는다.
+   넓은 화면은 처음에 펼쳐 두고, 아래로 내리면 저절로 접힌다. 휴대폰은 처음부터 접어 둔다 */
+.filter-head { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; }
+.filter-head .status { margin: 0; flex: 1 1 260px; min-width: 0; }
+#f-toggle { display: inline-flex; align-items: center; gap: 6px; flex: none; }
+#f-toggle .chev { font-size: 10px; }
+.filters:not(.open) .filter-row { display: none; }
+.filters.open .filter-row { margin-top: 12px; }
+#filter-sentinel { height: 1px; }
 @media (max-width: 759px) {
   .filters { position: sticky; top: 0; z-index: 20; padding: 10px 0; }
-  #f-toggle { display: inline-flex; align-items: center; }
-  .filters:not(.open) .filter-row { display: none; }
   .filters.open .filter-row { margin-top: 10px; max-height: 60vh; overflow-y: auto; }
   .status { font-size: 12px; }
   h2 { scroll-margin-top: 140px; }
@@ -383,8 +388,12 @@ details.tbl[open] > summary::after { content: "▴"; }
     </dl>
   </header>
 
+  <div id="filter-sentinel" aria-hidden="true"></div>
   <section class="filters" aria-label="필터">
-    <button class="btn" id="f-toggle" type="button" aria-expanded="false" aria-controls="filter-row">필터 열기</button>
+    <div class="filter-head">
+      <button class="btn" id="f-toggle" type="button" aria-expanded="false" aria-controls="filter-row">필터 펼치기 <span class="chev" aria-hidden="true">▾</span></button>
+      <p class="status" id="status" role="status">자료를 불러오는 중입니다. 처음 열 때는 자료(약 14MB)를 받느라 몇 초 걸릴 수 있습니다.</p>
+    </div>
     <div class="filter-row" id="filter-row">
       <label class="field">기간 시작<select id="f-from"></select></label>
       <label class="field">기간 끝<select id="f-to"></select></label>
@@ -397,7 +406,6 @@ details.tbl[open] > summary::after { content: "▴"; }
       <label class="field">장소 카테고리<select id="f-pcat"></select></label>
       <button class="btn" id="f-reset" type="button">초기화</button>
     </div>
-    <p class="status" id="status" role="status">자료를 불러오는 중입니다. 처음 열 때는 자료(약 14MB)를 받느라 몇 초 걸릴 수 있습니다.</p>
     <nav class="chipnav" id="chipnav" aria-label="구역 바로가기"></nav>
   </section>
 
@@ -1549,11 +1557,20 @@ for (const n of document.querySelectorAll("[data-icon]")) { n.setAttribute("aria
 renderSources();
 syncControls();
 render();
-// 휴대폰 필터 열고 닫기
-$("f-toggle").addEventListener("click", () => {
-  const box = document.querySelector(".filters"), open = box.classList.toggle("open");
-  $("f-toggle").setAttribute("aria-expanded", open); $("f-toggle").textContent = open ? "필터 닫기" : "필터 열기";
-});
+// 필터 펼치기·접기. 단추로 언제든 바꿀 수 있다
+function setFilters(open) {
+  document.querySelector(".filters").classList.toggle("open", open);
+  $("f-toggle").setAttribute("aria-expanded", open);
+  $("f-toggle").replaceChildren(open ? "필터 접기 " : "필터 펼치기 ", el("span", { class: "chev", "aria-hidden": "true" }, open ? "▴" : "▾"));
+}
+$("f-toggle").addEventListener("click", () => setFilters(!document.querySelector(".filters").classList.contains("open")));
+// 넓은 화면은 처음에 펼쳐 둔다. 휴대폰은 화면을 덜 가리도록 접어 둔다
+setFilters(innerWidth >= 760);
+// 넓은 화면에서 아래로 내려 필터가 화면 위에 붙으면 저절로 접고, 맨 위로 돌아오면 다시 펼친다.
+// 자동 검사 브라우저(webdriver)에서는 끈다 (검사가 필터 칸을 바로 조작하므로)
+if ("IntersectionObserver" in window && !navigator.webdriver) {
+  new IntersectionObserver(([e]) => { if (innerWidth >= 760) setFilters(e.isIntersecting); }).observe($("filter-sentinel"));
+}
 // 왼쪽 메뉴를 복사해 좁은 화면용 알약 줄을 만든다
 // 번호 칸(.toc-n)을 뺀 글자만 쓴다 (정규식으로 지우면 「20대」의 숫자까지 지워짐)
 for (const a of document.querySelectorAll(".toc a")) $("chipnav").append(el("a", { href: a.getAttribute("href") }, a.lastChild.textContent.trim()));
