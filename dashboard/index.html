@@ -1303,7 +1303,8 @@ $("f-toggle").addEventListener("click", () => {
   $("f-toggle").setAttribute("aria-expanded", open); $("f-toggle").textContent = open ? "필터 닫기" : "필터 열기";
 });
 // 왼쪽 메뉴를 복사해 좁은 화면용 알약 줄을 만든다
-for (const a of document.querySelectorAll(".toc a")) $("chipnav").append(el("a", { href: a.getAttribute("href") }, a.textContent.replace(/^\d+/, "")));
+// 번호 칸(.toc-n)을 뺀 글자만 쓴다 (정규식으로 지우면 「20대」의 숫자까지 지워짐)
+for (const a of document.querySelectorAll(".toc a")) $("chipnav").append(el("a", { href: a.getAttribute("href") }, a.lastChild.textContent.trim()));
 // 지금 보고 있는 구역을 왼쪽 메뉴와 알약 줄에 표시한다
 if ("IntersectionObserver" in window) {
   const ids = [...document.querySelectorAll(".toc a")].map(a => a.getAttribute("href").slice(1));
