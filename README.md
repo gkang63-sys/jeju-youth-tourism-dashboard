@@ -52,7 +52,7 @@
 
 2026-11-04에 저장소를 공개로 바꿨습니다. 저장소에 올라간 `dashboard/data.js`(관광 데이터)와 `dashboard/reviews.js`(블로그 후기 분류 결과)는 누구나 볼 수 있습니다.
 
-GitHub Pages로는 아직 배포하지 않습니다. 배포 설정 파일 `.github/workflows/deploy-pages.yml`은 로컬에만 있고 저장소에는 올리지 않았습니다. 배포할 때는 이 파일을 올리고, 저장소 Settings → Pages의 Source를 GitHub Actions로 정한 뒤, Actions 탭에서 Run workflow로 직접 실행합니다.
+2026-11-04에 GitHub Pages 배포 설정 파일 `.github/workflows/deploy-pages.yml`을 저장소에 올렸습니다. 이 파일은 `dashboard` 폴더의 `index.html`, `data.js`, `reviews.js`만 웹사이트로 올리므로 파일을 옮길 필요가 없습니다. 푸시할 때 자동으로 돌지 않습니다. 배포할 때는 저장소 Settings → Pages의 Source를 GitHub Actions로 정한 뒤, Actions 탭의 Deploy dashboard에서 Run workflow로 직접 실행합니다. 배포 주소는 https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/ 입니다.
 
 ## 데이터 다시 만들기
 
