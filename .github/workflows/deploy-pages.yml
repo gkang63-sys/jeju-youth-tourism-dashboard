@@ -1,9 +1,16 @@
 # 화면에 필요한 파일 3개만 GitHub Pages에 올린다. API 키를 쓰지 않으므로 Secrets 설정이 필요 없다.
 name: Deploy dashboard
 
-# 비공개 저장소에서는 Pages를 쓸 수 없으므로 푸시할 때 자동으로 돌지 않게 했다.
-# 공개 조건을 확인한 뒤 Actions 탭에서 'Run workflow'로 직접 실행한다.
+# 저장소를 공개로 바꿨으므로(2026-11-04) 화면 파일이 바뀌어 main에 올라오면 자동으로 배포한다.
+# Actions 탭에서 'Run workflow'로 직접 실행할 수도 있다.
 on:
+  push:
+    branches: [main]
+    paths:
+      - "dashboard/index.html"
+      - "dashboard/data.js"
+      - "dashboard/reviews.js"
+      - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -25,8 +32,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Collect site files
         run: |
-          mkdir _site
+          # 사이트 첫 화면과 /dashboard/ 주소 둘 다에서 대시보드가 열리게 한다
+          mkdir -p _site/dashboard
           cp dashboard/index.html dashboard/data.js dashboard/reviews.js _site/
+          cp dashboard/index.html dashboard/data.js dashboard/reviews.js _site/dashboard/
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
