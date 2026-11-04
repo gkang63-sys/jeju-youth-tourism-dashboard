@@ -6,7 +6,9 @@
 
 ## 실행
 
-`dashboard/index.html`을 브라우저로 엽니다. `index.html`, `data.js`, `reviews.js`가 같은 폴더에 있어야 합니다.
+웹에서 바로 보기: https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/dashboard/
+
+내 컴퓨터에서 보기: `dashboard/index.html`을 브라우저로 엽니다. `index.html`, `data.js`, `reviews.js`가 같은 폴더에 있어야 합니다.
 
 ## 화면 조작
 
@@ -52,7 +54,12 @@
 
 2026-11-04에 저장소를 공개로 바꿨습니다. 저장소에 올라간 `dashboard/data.js`(관광 데이터)와 `dashboard/reviews.js`(블로그 후기 분류 결과)는 누구나 볼 수 있습니다.
 
-2026-11-04에 GitHub Pages 배포 설정 파일 `.github/workflows/deploy-pages.yml`을 저장소에 올렸습니다. 이 파일은 `dashboard` 폴더의 `index.html`, `data.js`, `reviews.js`만 웹사이트로 올리므로 파일을 옮길 필요가 없습니다. 푸시할 때 자동으로 돌지 않습니다. 배포할 때는 저장소 Settings → Pages의 Source를 GitHub Actions로 정한 뒤, Actions 탭의 Deploy dashboard에서 Run workflow로 직접 실행합니다. 배포 주소는 https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/ 입니다.
+2026-11-04부터 GitHub Pages로 공개합니다. 저장소 Settings → Pages의 Source가 「Deploy from a branch」(main)라서, main에 올리면 1~2분 뒤 웹사이트에 반영됩니다.
+
+- 대시보드: https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/dashboard/
+- 사이트 첫 화면(https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/)은 이 README입니다.
+
+`.github/workflows/deploy-pages.yml`은 다른 배포 방식입니다. Source를 「GitHub Actions」로 바꾸고 Actions 탭의 Deploy dashboard에서 Run workflow를 누르면, `dashboard` 폴더의 `index.html`, `data.js`, `reviews.js`만 올려 사이트 첫 화면이 바로 대시보드가 됩니다. 지금은 쓰지 않습니다.
 
 ## 데이터 다시 만들기
 
