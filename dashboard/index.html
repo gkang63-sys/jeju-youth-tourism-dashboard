@@ -285,7 +285,14 @@ body { background: var(--page); }
 .toc-n { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--chip); color: var(--dot); opacity: 1; }
 .toc a.active { background: var(--ink); color: #fff; box-shadow: 0 6px 14px rgba(0,0,0,.18); }
 .toc a.active .toc-n { background: #fff; color: var(--ink); }
-.toc-foot { margin: auto 0 0; display: flex; gap: 10px; align-items: center; padding: 12px; border-radius: 18px; background: var(--row); font-size: 11px; color: var(--muted); --dot: var(--ink2); }
+/* 보고서 다운로드: 메뉴 아래 빈 곳, 자료 출처 상자 바로 위 */
+.report-btn { margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px; padding: 10px 14px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font: 600 14px/1.2 system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif; cursor: pointer; box-shadow: 0 6px 14px rgba(0,0,0,.16); transition: transform .15s, box-shadow .15s; }
+.report-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(0,0,0,.2); }
+.report-btn:disabled { opacity: .5; cursor: wait; transform: none; }
+.report-note { margin: 6px 0 10px; text-align: center; font-size: 11px; color: var(--muted); }
+.chipnav .chip-report { flex: none; font: 600 12px/1.2 system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif; color: #fff; background: var(--ink); border: 0; border-radius: 999px; padding: 5px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+.chipnav .chip-report svg { width: 14px; height: 14px; }
+.toc-foot { margin: 0; display: flex; gap: 10px; align-items: center; padding: 12px; border-radius: 18px; background: var(--row); font-size: 11px; color: var(--muted); --dot: var(--ink2); }
 .toc-foot .toc-n { background: var(--surface); }
 .toc-foot b { display: block; font-size: 12px; color: var(--ink); font-weight: 600; }
 /* 머리말과 필터 */
@@ -374,6 +381,8 @@ details.tbl[open] > summary::after { content: "▴"; }
     <li><a href="#s-analysis"><span class="toc-n ic" data-icon="bulb"></span>분석 결과</a></li>
     <li><a href="#s-source"><span class="toc-n ic" data-icon="db"></span>자료 기준</a></li>
   </ol>
+  <button class="report-btn" id="report-btn" type="button" title="지금 필터 조건으로 보고서 파일을 만들어 내려받습니다"><span class="ic" data-icon="download"></span>보고서 다운로드</button>
+  <p class="report-note">지금 필터 조건 기준 · 인쇄하면 PDF</p>
   <div class="toc-foot"><span class="toc-n ic" data-icon="db"></span><span><b>자료 출처</b>비짓제주 · 네이버 블로그</span></div>
 </nav>
 <div class="wrap">
@@ -1542,6 +1551,7 @@ const ICONS = {
   search: '<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/>',
   chat: '<path d="M4 5.5h16v10.5H10l-6 4z"/><path d="M8 10h8M8 13h5"/>',
   bulb: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/>',
+  download: '<path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/>',
   db: '<ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v13c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-13"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/>',
   arrow: '<path d="M4 17l6-6 4 4 6-7"/><path d="M15 8h5v5"/>',
   calendar: '<rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16M9 3v4M15 3v4"/>',
@@ -1574,6 +1584,122 @@ if ("IntersectionObserver" in window && !navigator.webdriver) {
 // 왼쪽 메뉴를 복사해 좁은 화면용 알약 줄을 만든다
 // 번호 칸(.toc-n)을 뺀 글자만 쓴다 (정규식으로 지우면 「20대」의 숫자까지 지워짐)
 for (const a of document.querySelectorAll(".toc a")) $("chipnav").append(el("a", { href: a.getAttribute("href") }, a.lastChild.textContent.trim()));
+
+/* ---------- 보고서 다운로드 ----------
+   지금 화면(필터 조건)의 지표·차트·표·분석 문장을 모아 한 파일(HTML)로 내려받는다.
+   파일은 바깥 자료 없이 열리며, 안의 「인쇄 / PDF로 저장」 단추로 PDF를 만들 수 있다. */
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const flat = node => node ? node.textContent.replace(/\s+/g, " ").trim() : "";
+// 차트는 화면에 그려진 크기보다 크게 늘리지 않는다 (글자가 커지지 않게)
+function chartOf(id) {
+  const s = $(id).querySelector("svg");
+  if (!s) return `<p class="empty">${esc(flat($(id)))}</p>`;
+  const c = s.cloneNode(true), w = +(c.getAttribute("viewBox") || "").split(" ")[2] || 0;
+  if (w) c.setAttribute("style", `max-width:${Math.round(w)}px`);
+  return `<div class="chart">${c.outerHTML}</div>`;
+}
+function listOf(id) { return [...$(id).querySelectorAll("li")].map(li => `<li>${esc(flat(li))}</li>`).join(""); }
+function tileHtml(id) {
+  const h = $(id), pick = s => flat(h.querySelector(s));
+  return `<div class="tile"><p class="t-label">${esc(pick(".kpi-label"))}</p><p class="t-value">${esc(pick(".kpi-value, .sum-value"))}</p><p class="t-sub">${esc(pick(".kpi-sub"))}</p></div>`;
+}
+function tableHtml(head, rows) {
+  return `<table><thead><tr>${head.map(([t, n]) => `<th${n ? ' class="num"' : ""}>${esc(t)}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((v, i) => `<td${head[i][1] ? ' class="num"' : ""}>${esc(v)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+function buildReport() {
+  const st = state, m = model, L = m.places, R = m.region, Q = m.search, V = m.reviews;
+  // 지도는 확대 상태와 상관없이 제주 전체로 넣는다
+  const zoomWas = mapZoom; if (zoomWas !== "all") { mapZoom = "all"; renderMap(st, R); }
+  const mapSvg = chartOf("map");
+  if (zoomWas !== "all") { mapZoom = zoomWas; renderMap(st, R); }
+  const cs = getComputedStyle(document.documentElement);
+  const vars = ["--s1", "--s2", "--s3", "--s4", "--s2-text", "--q1", "--q2", "--q3", "--q4", "--q5", "--grid", "--axis", "--muted", "--ink", "--ink2", "--surface", "--land", "--mute-mark", "--a-blue", "--a-orange", "--a-green", "--a-violet", "--a-pink", "--a-teal", "--a-gray", "--up", "--down", "--up-bg", "--down-bg"]
+    .map(v => `${v}:${cs.getPropertyValue(v).trim()};`).join("");
+  const now = new Date(), pad = n => String(n).padStart(2, "0");
+  const stamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const measureName = ARRIVE_LABEL[st.arrive];
+  const places = L.ids.slice(0, 10).map((g, i) => { const d = placeDetail(st, g); return [i + 1, P.names[groupName[g]], E.names[groupEmd[g]], d.cat, fmt(L.measure[g])]; });
+  const regions = R.hasData ? R.items.slice(0, 10).map((o, i) => [i + 1, o.name, o.sgg, fmt(o.value)]) : [];
+  const words = Q.ids.slice(0, 10).map((n, i) => [i + 1, S.names[n], Q.repCat(n), fmt(Q.sum[n]), pct(Q.sum[n] / Q.total * 100, 2)]);
+  const rv = kind => V.groups[kind].filter(it => it.young || it.total).slice(0, 5).map(it => [it.label, fmt(it.young), fmt(it.total)]);
+  const section = (n, title, body) => `<section><h2><span class="n">${n}</span>${esc(title)}</h2>${body}</section>`;
+  const body = [
+    section("01", "20대 방문 규모", `<div class="tiles">${["kpi-visitors", "kpi-search", "kpi-mom", "kpi-period", "kpi-share"].map(tileHtml).join("")}</div><p class="note">${esc(flat($("count-note")))}</p>`),
+    section("02", "방문 추이와 인기 장소",
+      `<h3>${esc(flat($("trend-title")))}</h3><p class="scope">${esc(flat($("trend-scope")))}</p>${chartOf("chart-trend")}` +
+      `<h3>연령대별 방문객 수</h3>${chartOf("chart-age")}` +
+      `<h3>${esc(flat($("place-title")))} · 상위 10곳</h3><p class="scope">${esc(flat($("place-scope")))} · ${esc(flat($("place-total")))}</p>` +
+      (places.length ? tableHtml([["순위", 1], ["목적지명"], ["읍면동"], ["카테고리"], [measureName + "(건)", 1]], places) : `<p class="empty">선택한 조건에 맞는 인기 장소 자료가 없습니다.</p>`)),
+    section("03", "지역별 방문",
+      `<h3>${esc(flat($("map-title")))}</h3><p class="scope">${esc(flat($("map-scope")))}</p>${mapSvg}<p class="note">${esc(flat($("map-scale")))}</p>` +
+      `<h3>${esc(flat($("region-title")))} · 상위 10곳</h3><p class="scope">${esc(flat($("region-lede")))}</p>` +
+      (regions.length ? tableHtml([["순위", 1], ["읍면동"], ["시"], [VISITOR_LABEL[st.visitor] + " 방문객(명)", 1]], regions) : `<p class="empty">선택한 기간에는 읍면동 방문 자료가 없습니다.</p>`)),
+    section("04", "관광 검색어",
+      `<h3>${esc(flat($("cloud-title")))}</h3><p class="scope">${esc(flat($("cloud-scope")))} · ${esc(flat($("cloud-legend")))}</p>${chartOf("wordcloud")}` +
+      `<h3>키워드 상위 10개</h3>` + (words.length ? tableHtml([["순위", 1], ["키워드"], ["분류"], ["수치 합", 1], ["비중", 1]], words) : `<p class="empty">${esc(emptySearchMsg(st))}</p>`) +
+      `<p class="note">${esc(flat($("search-note")))}</p>`),
+    section("05", "온라인 후기",
+      `<p class="scope">${esc(flat($("review-scope")))}</p><p>${esc(flat($("review-lede")))}</p>` +
+      (V.total ? `<div class="cols">${[["a", "주요 활동"], ["s", "만족 요인"], ["i", "불편 사항"]].map(([k, t]) => `<div><h3>${t}</h3>${tableHtml([["항목"], ["'20대' 언급", 1], ["전체", 1]], rv(k))}</div>`).join("")}</div>` : `<p class="empty">선택한 기간에는 수집된 글이 없습니다.</p>`) +
+      `<p class="note">${esc(flat($("review-warn")))} ${esc(flat($("review-note")))}</p>`),
+    section("06", "분석 결과",
+      `<p class="scope">${esc(flat($("an-sum-scope")))}</p><div class="tiles four">${["sum-1", "sum-2", "sum-3", "sum-4"].map(tileHtml).join("")}</div>` +
+      `<h3>실행 제안 (검증 전 가설)</h3><ol>${listOf("an-action")}</ol>` +
+      `<h3>확인된 사실 (현재 필터 기준)</h3><ul>${listOf("an-facts")}</ul>` +
+      `<h3>해석 (${esc(flat($("an-base")))})</h3><ul>${listOf("an-interp")}</ul>` +
+      `<h3>추가 확인 사항</h3><ul>${listOf("an-check")}</ul>`),
+    section("07", "자료 기준", `<div class="src">${$("table-sources").innerHTML}</div>`),
+  ].join("");
+  const title = "청년층 제주 관광 현황 보고서";
+  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title}</title><style>
+:root{${vars}}
+*{box-sizing:border-box}body{margin:0;background:#f3f3f3;color:#111;font:14px/1.65 system-ui,-apple-system,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+.page{max-width:960px;margin:24px auto;background:#fff;border-radius:20px;padding:40px 44px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}.bar button{font:600 13px system-ui,"Malgun Gothic",sans-serif;background:#111;color:#fff;border:0;border-radius:999px;padding:9px 18px;cursor:pointer}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}.sub{color:rgba(0,0,0,.6);margin:0 0 18px}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0 0 8px;font-size:13px}dt{color:rgba(0,0,0,.55)}dd{margin:0}
+section{margin-top:34px}h2{display:flex;align-items:center;gap:10px;font-size:21px;margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid #111}h2 .n{font:600 12px ui-monospace,Consolas,monospace;background:#111;color:#fff;border-radius:999px;padding:2px 9px}
+h3{font-size:16px;margin:22px 0 4px}.scope,.note{font-size:12px;color:rgba(0,0,0,.58);margin:2px 0 8px}.empty{background:#f6f6f6;border-radius:12px;padding:12px 14px;color:rgba(0,0,0,.7)}
+.tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:8px 0}.tiles.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tile{background:#f6f6f6;border-radius:14px;padding:12px 14px}.t-label{font-size:12px;color:rgba(0,0,0,.6);margin:0}.t-value{font-size:19px;font-weight:700;margin:4px 0;letter-spacing:-.02em;overflow-wrap:anywhere}.t-sub{font-size:11px;color:rgba(0,0,0,.55);margin:0}
+.chart svg{display:block;width:100%;height:auto;overflow:visible;margin:0 auto}.axis-text{font-size:11px;fill:var(--muted)}.axis-title{font-size:11px;fill:var(--ink2)}.bar-label{font-size:12px;fill:var(--ink2)}.bar-value{font-size:11px;fill:var(--ink2)}.hit{fill:transparent}
+path.region{stroke:#fff;stroke-width:1;vector-effect:non-scaling-stroke}path.region.selected{stroke:#111;stroke-width:2}.map-label{font-size:11px;font-weight:600;fill:#111;paint-order:stroke;stroke:#fff;stroke-width:3px}
+#x-cloud text,.chart text[font-size]{font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0}th{text-align:left;font-weight:600;color:rgba(0,0,0,.6);border-bottom:1px solid #ddd;padding:6px 8px}td{border-bottom:1px solid #eee;padding:6px 8px;vertical-align:top}.num{text-align:right;font-variant-numeric:tabular-nums}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.src table{font-size:11.5px}.src td{white-space:normal}
+ul,ol{padding-left:20px}li{margin-bottom:6px}
+.foot{margin-top:36px;font-size:11px;color:rgba(0,0,0,.5);border-top:1px solid #eee;padding-top:10px}
+@media (max-width:760px){.page{padding:24px 18px;margin:0;border-radius:0}.tiles,.tiles.four{grid-template-columns:repeat(2,minmax(0,1fr))}.cols{grid-template-columns:1fr}}
+@media print{body{background:#fff}.page{margin:0;padding:0;max-width:none;border-radius:0}.noprint{display:none}section{break-inside:auto}h2,h3{break-after:avoid}.chart,table,.tiles,.tile{break-inside:avoid}@page{size:A4;margin:14mm}}
+</style></head><body><div class="page">
+<div class="bar noprint"><span class="sub" style="margin:0">대시보드에서 내려받은 보고서입니다.</span><button type="button" onclick="print()">인쇄 / PDF로 저장</button></div>
+<h1>${title}</h1><p class="sub">청년층은 제주에서 어떤 여행을 하고 있을까?</p>
+<dl><dt>만든 때</dt><dd>${esc(stamp)}</dd><dt>적용 조건</dt><dd>${esc(flat($("status")))}</dd><dt>자료별 기간</dt><dd>${esc(flat($("meta-ranges")))}</dd><dt>데이터 출처</dt><dd>제주 관광 빅데이터 플랫폼(비짓제주), 네이버 블로그 검색 API (온라인 후기)</dd><dt>분석 대상</dt><dd>20대는 연령대별 방문 자료에만 있음. 지역·장소·검색어 자료는 연령 정보가 없어 전체 관광객 특성으로 봄.</dd></dl>
+${body}
+<p class="foot">이 보고서는 대시보드(https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/)의 화면 값을 내려받은 시점의 필터 조건으로 모은 것입니다. 수치의 정의와 한계는 「자료 기준」과 각 절의 안내를 따릅니다.</p>
+</div></body></html>`;
+}
+function downloadReport() {
+  const btns = document.querySelectorAll(".report-btn, .chip-report");
+  btns.forEach(b => { b.disabled = true; });
+  try {
+    const html = buildReport();
+    const now = new Date(), ymd = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`;
+    const url = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
+    const a = el("a", { href: url, download: `청년층_제주_관광_보고서_${ymd}.html` });
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  } finally {
+    btns.forEach(b => { b.disabled = false; });
+  }
+}
+$("report-btn").addEventListener("click", downloadReport);
+// 왼쪽 메뉴가 없는 좁은 화면에서는 알약 줄 끝에 같은 단추를 둔다
+{
+  const chip = el("button", { class: "chip-report", type: "button", title: "지금 필터 조건으로 보고서 파일을 만들어 내려받습니다" }, icon("download"), "보고서");
+  chip.addEventListener("click", downloadReport);
+  $("chipnav").append(chip);
+}
 // 지금 보고 있는 구역을 왼쪽 메뉴와 알약 줄에 표시한다
 if ("IntersectionObserver" in window) {
   const ids = [...document.querySelectorAll(".toc a")].map(a => a.getAttribute("href").slice(1));
