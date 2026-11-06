@@ -1,6 +1,6 @@
 # 청년층 제주 관광 현황 대시보드
 
-### 👉 [대시보드 열기](https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/)
+### 👉 [대시보드 열기](https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/) · [발표 자료 열기](https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/presentation/)
 
 청년층은 제주에서 어떤 여행을 하고 있을까? 20대 방문 추이, 지역별 방문, 인기 장소, 검색어, 블로그 후기를 한 화면에서 봅니다. 기간과 지역 필터를 바꾸면 지표와 차트가 함께 바뀝니다.
 
@@ -24,13 +24,15 @@
 
 제주 관광 데이터 분석 교육 마지막 날, 이 대시보드를 어떻게 만들었는지 발표한 자료입니다. 17장이며 내용은 세 파일이 같습니다.
 
+**웹에서 바로 보기:** https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/presentation/ (PDF: [slides.pdf](https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/presentation/slides.pdf))
+
 | 파일 | 쓰임 |
 |---|---|
-| [`발표/청년층_제주_관광_대시보드_제작기.html`](발표/청년층_제주_관광_대시보드_제작기.html) | 발표용(주 파일). 내려받아 브라우저로 엽니다. ← → 넘기기, N 발표 메모, F 전체 화면, P 인쇄 |
+| [`발표/청년층_제주_관광_대시보드_제작기.html`](발표/청년층_제주_관광_대시보드_제작기.html) | 발표용(주 파일). 위 웹 주소로 열거나 내려받아 브라우저로 엽니다. ← → 넘기기, N 발표 메모, F 전체 화면, P 인쇄 |
 | [`발표/청년층_제주_관광_대시보드_제작기.pdf`](발표/청년층_제주_관광_대시보드_제작기.pdf) | 참고용. 깃허브에서 바로 볼 수 있습니다 |
 | [`발표/청년층_제주_관광_대시보드_제작기(참고용).pptx`](<발표/청년층_제주_관광_대시보드_제작기(참고용).pptx>) | 참고용. 장마다 발표 화면 그림과 발표 메모가 들어 있습니다(글자 수정 불가) |
 
-마지막 장의 대시보드·코드 주소는 세 파일 모두 누르면 열립니다. 깃허브 화면에서 HTML 파일을 누르면 코드만 보이므로, 「Download raw file」로 내려받아 여세요.
+마지막 장의 대시보드·코드 주소는 세 파일 모두 누르면 열립니다. 깃허브 파일 목록에서 HTML 파일을 누르면 코드만 보이므로, 발표 화면은 위 웹 주소로 여세요. `발표/` 폴더가 바뀌어 main에 올라오면 웹 주소에도 자동으로 반영됩니다.
 
 ## 변경 기록
 
@@ -101,6 +103,7 @@
 2026-11-04부터 GitHub Pages로 공개합니다. 저장소 Settings → Pages의 Source는 「GitHub Actions」입니다. 배포 설정 파일 `.github/workflows/deploy-pages.yml`이 `dashboard` 폴더의 `index.html`, `data.js`, `reviews.js`만 웹사이트로 올립니다.
 
 - 대시보드: https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/ (예전 주소 `.../dashboard/`도 같은 화면)
+- 발표 자료: https://gkang63-sys.github.io/jeju-youth-tourism-dashboard/presentation/
 - 이 세 파일이나 배포 설정 파일이 바뀌어 main에 올라오면 자동으로 배포되어 1~2분 뒤 반영됩니다. Actions 탭의 Deploy dashboard에서 Run workflow로 직접 실행할 수도 있습니다.
 
 ## 데이터 다시 만들기

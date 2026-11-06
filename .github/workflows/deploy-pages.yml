@@ -1,4 +1,4 @@
-# 화면에 필요한 파일 3개만 GitHub Pages에 올린다. API 키를 쓰지 않으므로 Secrets 설정이 필요 없다.
+# 대시보드 화면에 필요한 파일 3개와 발표 자료(HTML·PDF)만 GitHub Pages에 올린다. API 키를 쓰지 않으므로 Secrets 설정이 필요 없다.
 name: Deploy dashboard
 
 # 저장소를 공개로 바꿨으므로(2026-11-04) 화면 파일이 바뀌어 main에 올라오면 자동으로 배포한다.
@@ -10,6 +10,7 @@ on:
       - "dashboard/index.html"
       - "dashboard/data.js"
       - "dashboard/reviews.js"
+      - "발표/**"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -36,6 +37,10 @@ jobs:
           mkdir -p _site/dashboard
           cp dashboard/index.html dashboard/data.js dashboard/reviews.js _site/
           cp dashboard/index.html dashboard/data.js dashboard/reviews.js _site/dashboard/
+          # 발표 자료: /presentation/ 주소에서 HTML 발표가 열리고, 같은 곳에서 PDF도 받는다
+          mkdir -p _site/presentation
+          cp "발표/청년층_제주_관광_대시보드_제작기.html" _site/presentation/index.html
+          cp "발표/청년층_제주_관광_대시보드_제작기.pdf" _site/presentation/slides.pdf
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
